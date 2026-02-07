@@ -1,0 +1,40 @@
+{
+  // BSides Ballarat 2026 — MCP Server Configuration
+  // See: https://code.visualstudio.com/docs/copilot/chat/mcp-servers
+  //
+  // These servers are configured at the workspace level so anyone
+  // who clones the repo gets the same MCP tools automatically.
+  "servers": {
+    // Phase 1: Academic paper search via Semantic Scholar
+    // "semanticScholar": {
+    //   "type": "stdio",
+    //   "command": "uv",
+    //   "args": ["run", "semantic-scholar-mcp"],
+    //   "env": {
+    //     "SEMANTIC_SCHOLAR_API_KEY": "${input:semanticScholarApiKey}"
+    //   }
+    // },
+
+    // Phase 1: Mermaid diagram rendering in chat
+    // "mermaidRenderer": {
+    //   "type": "stdio",
+    //   "command": "npx",
+    //   "args": ["mermaid-renderer-mcp-app"]
+    // }
+
+    // Phase 3: Local tools for PDF download + trigger (if needed)
+    // "localTools": {
+    //   "type": "stdio",
+    //   "command": "python",
+    //   "args": ["${workspaceFolder}/servers/paper-tools/main.py"]
+    // }
+  },
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "semanticScholarApiKey",
+      "description": "Semantic Scholar API Key (get one free at https://www.semanticscholar.org/product/api)",
+      "password": true
+    }
+  ]
+}

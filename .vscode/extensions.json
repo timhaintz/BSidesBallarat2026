@@ -1,0 +1,23 @@
+{
+  // BSides Ballarat 2026 — Recommended Extensions
+  // VS Code will prompt users to install these when they open the workspace.
+  // See: https://code.visualstudio.com/docs/configure/extensions/extension-marketplace#_workspace-recommended-extensions
+  "recommendations": [
+    // GitHub Copilot (AI assistant & MCP host)
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+
+    // Python development
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+
+    // Mermaid diagram preview
+    "bierner.markdown-mermaid",
+
+    // Markdown linting
+    "DavidAnson.vscode-markdownlint",
+
+    // EditorConfig for consistent formatting
+    "EditorConfig.EditorConfig"
+  ]
+}

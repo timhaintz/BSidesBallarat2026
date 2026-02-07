@@ -1,0 +1,35 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+.env
+
+# ===== Node.js =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===== VS Code Extension =====
+extension/out/
+extension/*.vsix
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== IDE (user-specific, not workspace) =====
+# .vscode/ is intentionally tracked for workspace sharing
+# but user-local state is not:
+.vscode/.ropeproject/
+.vscode/launch.json
+
+# ===== Downloaded artifacts =====
+/tmp/
+downloads/
