@@ -2,12 +2,12 @@
 
 ## 1. Executive Summary
 
-**Project Name:** BSides Security Research Stack  
-**Goal:** Create a "Security Operations Center" inside VS Code for the BSides Ballarat 2026 presentation.  
-**Core Value:** Demonstrate how Model Context Protocol (MCP) allows a security researcher to discover, view, and visualize academic vulnerabilities without leaving the IDE.  
-**Target Audience:** Security researchers, penetration testers, and developers attending BSides.  
-**Presenter:** Tim Haintz  
-**Conference:** [BSides Ballarat 2026](https://federation.edu.au/icsl/icsl-conferences/bsides-ballarat-2026)  
+**Project Name:** BSides Security Research Stack
+**Goal:** Create a "Security Operations Center" inside VS Code for the BSides Ballarat 2026 presentation.
+**Core Value:** Demonstrate how Model Context Protocol (MCP) allows a security researcher to discover, view, and visualize academic vulnerabilities without leaving the IDE.
+**Target Audience:** Security researchers, penetration testers, and developers attending BSides.
+**Presenter:** Tim Haintz
+**Conference:** [BSides Ballarat 2026](https://federation.edu.au/icsl/icsl-conferences/bsides-ballarat-2026)
 **Status:** Draft — this PRD is a living document that will evolve as the project is built live.
 
 ## 2. User Flow (The Demo Script)
@@ -22,7 +22,7 @@ This toolchain supports a specific "Hero Flow" to be performed live on stage:
 3. **Analysis & Visualization:** User asks the Agent to explain the attack flow visually.
    - *System:* Multimodal LLM analyzes the rendered image (screenshot).
    - *System:* Generates Mermaid code representing the attack architecture.
-   - *System:* Renders the Mermaid diagram interactively in the chat using the Mermaid MCP App.
+   - *System:* Saves Mermaid code to a `.md` file and opens it with the Markdown Mermaid preview extension.
 
 ## 3. Technical Architecture
 
@@ -44,9 +44,9 @@ This toolchain supports a specific "Hero Flow" to be performed live on stage:
 
 ### 3.3. The "Visualizer" (Output)
 
-- **Component:** `mermaid-renderer-mcp-app`
-- **Type:** MCP Server (Node.js)
-- **Function:** Renders Mermaid code into SVG/HTML directly in the chat interface.
+- **Component:** `bierner.markdown-mermaid` VS Code extension
+- **Type:** VS Code Extension (already in `.vscode/extensions.json`)
+- **Function:** Renders Mermaid code blocks in Markdown preview. The Agent generates a `.md` file containing a Mermaid code block, which is previewed natively in VS Code.
 
 ### 3.4. The "Glue" (Control Plane)
 
@@ -83,7 +83,6 @@ BSidesBallarat2026/
 Must define the following servers using dynamic `${workspaceFolder}` paths:
 
 - `semantic-scholar` (via `uv` or `pip`)
-- `mermaid-renderer` (via `npx`)
 - `local-tools` (Custom Python script for file handling, if needed)
 
 ### 5.2. Custom Extension Capabilities
@@ -96,7 +95,7 @@ The extension must expose a command `bsides.renderPdf` that:
 
 ### 5.3. Mermaid Integration
 
-The system must support the MCP Apps capability (`_meta` resource hints) or fall back to standard Markdown code blocks if the UI is unstable.
+Mermaid diagrams are rendered using the `bierner.markdown-mermaid` VS Code extension (included in `.vscode/extensions.json`). The Agent generates a Markdown file with a Mermaid code block, which can be previewed using VS Code's built-in Markdown preview.
 
 ### 5.4. VS Code Environment Export
 
@@ -112,7 +111,7 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
 
 - [x] Initialize Git repo with `.vscode/mcp.json`.
 - [ ] Verify `semantic-scholar-mcp` works via the Chat panel.
-- [ ] Verify `mermaid-renderer` works via the Chat panel.
+- [ ] Verify Mermaid preview works via the `bierner.markdown-mermaid` extension.
 
 ### Phase 2: The "Eyes" (Extension)
 

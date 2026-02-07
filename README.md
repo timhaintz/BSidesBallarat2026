@@ -1,7 +1,7 @@
 # BSides Ballarat 2026 — Security Research Assistant
 
-**Presenter:** Tim Haintz  
-**Conference:** [BSides Ballarat 2026](https://federation.edu.au/icsl/icsl-conferences/bsides-ballarat-2026)  
+**Presenter:** Tim Haintz
+**Conference:** [BSides Ballarat 2026](https://federation.edu.au/icsl/icsl-conferences/bsides-ballarat-2026)
 **Status:** 🚧 Planning / Work-in-Progress
 
 ## What is this?
@@ -12,12 +12,12 @@ The entire VS Code environment (settings, extensions, MCP config) is version-con
 
 ## The Demo (Hero Flow)
 
-1. **Discovery** — Ask the Agent to find the latest paper on a threat (e.g., "Prompt Injection").  
+1. **Discovery** — Ask the Agent to find the latest paper on a threat (e.g., "Prompt Injection").
    → Queries Semantic Scholar via MCP → returns abstract & PDF URL.
-2. **Acquisition & Rendering** — Ask the Agent to download and "show" the paper.  
+2. **Acquisition & Rendering** — Ask the Agent to download and "show" the paper.
    → Downloads PDF → Custom Extension renders it as an image in the editor.
-3. **Analysis & Visualization** — Ask the Agent to explain the attack flow visually.  
-   → Multimodal LLM analyses the image → generates a Mermaid diagram → renders it interactively in chat.
+3. **Analysis & Visualization** — Ask the Agent to explain the attack flow visually.
+   → Multimodal LLM analyses the image → generates a Mermaid diagram → previews it via the Markdown Mermaid extension.
 
 ## Repository Structure
 

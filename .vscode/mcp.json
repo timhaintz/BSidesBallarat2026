@@ -14,14 +14,6 @@
     //     "SEMANTIC_SCHOLAR_API_KEY": "${input:semanticScholarApiKey}"
     //   }
     // },
-
-    // Phase 1: Mermaid diagram rendering in chat
-    // "mermaidRenderer": {
-    //   "type": "stdio",
-    //   "command": "npx",
-    //   "args": ["mermaid-renderer-mcp-app"]
-    // }
-
     // Phase 3: Local tools for PDF download + trigger (if needed)
     // "localTools": {
     //   "type": "stdio",

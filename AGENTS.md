@@ -95,7 +95,7 @@ The live demo follows this sequence: **Discover → Acquire → Render → Analy
 | Tool | Purpose |
 |---|---|
 | `uv` / `pip` | Python package management |
-| `npx` | Running Node.js MCP servers |
+| `npx` | Running Node.js tools |
 | `yo code` | Scaffolding VS Code extensions |
 | `ruff` | Python linting & formatting |
 | `eslint` | TypeScript linting |
