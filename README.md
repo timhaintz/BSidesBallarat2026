@@ -35,6 +35,9 @@ BSidesBallarat2026/
 │   └── requirements.txt
 ├── .env.example           # API key template
 ├── .gitignore
+├── .python-version        # Python version pin (managed by uv)
+├── pyproject.toml         # Python project config & dependencies
+├── uv.lock                # Lockfile for reproducible installs
 ├── AGENTS.md              # AI coding agent instructions
 ├── PRD.md                 # Product Requirements Document
 └── README.md              # ← You are here
@@ -46,7 +49,8 @@ BSidesBallarat2026/
 
 - [VS Code](https://code.visualstudio.com/) (stable, latest)
 - [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) subscription
-- Python 3.10+ and Node.js 18+
+- Python 3.13+ and Node.js 18+
+- [`uv`](https://docs.astral.sh/uv/) for Python virtual environments and package management
 - A [Semantic Scholar API key](https://www.semanticscholar.org/product/api) (free)
 
 ### Setup
@@ -56,15 +60,20 @@ BSidesBallarat2026/
    git clone https://github.com/timhaintz/BSidesBallarat2026.git
    cd BSidesBallarat2026
    ```
-2. **Open in VS Code** — VS Code will prompt you to install the recommended extensions.
+2. **Install Python 3.13+ and create the virtual environment**
+   ```bash
+   uv python install 3.13
+   uv sync --group dev
+   ```
+3. **Open in VS Code** — VS Code will prompt you to install the recommended extensions.
    ```bash
    code .
    ```
-3. **Copy the env template** and add your API key:
+4. **Copy the env template** and add your API key:
    ```bash
    cp .env.example .env
    ```
-4. **Start the MCP servers** — Open the Chat view and the servers defined in `.vscode/mcp.json` will be available.
+5. **Start the MCP servers** — Open the Chat view and the servers defined in `.vscode/mcp.json` will be available.
 
 ## Project Documents
 

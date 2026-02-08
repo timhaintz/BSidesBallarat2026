@@ -6,14 +6,19 @@
   // who clones the repo gets the same MCP tools automatically.
   "servers": {
     // Phase 1: Academic paper search via Semantic Scholar
-    // "semanticScholar": {
-    //   "type": "stdio",
-    //   "command": "uv",
-    //   "args": ["run", "semantic-scholar-mcp"],
-    //   "env": {
-    //     "SEMANTIC_SCHOLAR_API_KEY": "${input:semanticScholarApiKey}"
-    //   }
-    // },
+    "semanticScholar": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--from",
+        "semantic-scholar-mcp",
+        "semantic-scholar-mcp"
+      ],
+      "env": {
+        "SEMANTIC_SCHOLAR_API_KEY": "${input:semanticScholarApiKey}"
+      }
+    }
     // Phase 3: Local tools for PDF download + trigger (if needed)
     // "localTools": {
     //   "type": "stdio",

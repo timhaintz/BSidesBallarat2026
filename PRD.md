@@ -73,6 +73,9 @@ BSidesBallarat2026/
 │   ├── paper-tools/       # (Optional) Python script for "Download & Trigger" logic
 │   └── requirements.txt
 ├── .env.example           # API Key template
+├── .python-version        # Python version pin (managed by uv)
+├── pyproject.toml         # Python project config & dependencies
+├── uv.lock                # Lockfile for reproducible installs
 ├── AGENTS.md              # AI coding agent instructions
 ├── PRD.md                 # This document
 └── README.md              # Setup instructions for workshop attendees
@@ -84,7 +87,7 @@ BSidesBallarat2026/
 
 Must define the following servers using dynamic `${workspaceFolder}` paths:
 
-- `semantic-scholar` (via `uv` or `pip`)
+- `semantic-scholar` (via `uv`)
 - `local-tools` (Custom Python script for file handling, if needed)
 
 ### 5.2. Custom Extension Capabilities

@@ -12,13 +12,23 @@ See [PRD.md](PRD.md) for the full product requirements.
 
 ### Language & Runtime
 
-- **Python 3.10+** for MCP servers and tooling (use type hints everywhere).
+- **Python 3.13+** for MCP servers and tooling (use type hints everywhere).
 - **TypeScript** for the VS Code extension (strict mode).
 - **Node.js 18+** for any Node-based MCP servers.
+- **`uv`** is the preferred tool for Python virtual environments and package management.
+
+### Python Environment (uv)
+
+- **`uv`** manages the virtual environment (`.venv/`), dependencies, and Python version.
+- The project is defined in `pyproject.toml` — add dependencies with `uv add <package>`.
+- Dev dependencies (ruff, pytest) are in the `[dependency-groups] dev` group.
+- Run any Python command through `uv run` (e.g., `uv run python script.py`, `uv run ruff check`).
+- The `.python-version` file pins the Python version; `uv sync` will auto-install it.
+- **Do not** use `pip install`, `python -m venv`, or manual `.venv` activation — use `uv` for everything.
 
 ### Code Style
 
-- Python: follow PEP 8; use `ruff` for linting and formatting.
+- Python: follow PEP 8; use `ruff` for linting and formatting (`uv run ruff check .`, `uv run ruff format .`).
 - TypeScript: use the VS Code extension conventions; `eslint` + `prettier`.
 - Use descriptive variable and function names — this project is educational.
 - Add docstrings / JSDoc comments to all public functions.
@@ -96,7 +106,7 @@ The live demo follows this sequence: **Discover → Acquire → Render → Analy
 
 | Tool | Purpose |
 |---|---|
-| `uv` / `pip` | Python package management |
+| `uv` | Python virtual environments and package management (preferred) |
 | `npx` | Running Node.js tools |
 | `yo code` | Scaffolding VS Code extensions |
 | `ruff` | Python linting & formatting |
