@@ -6,17 +6,15 @@
     // GitHub Copilot (AI assistant & MCP host)
     "GitHub.copilot",
     "GitHub.copilot-chat",
-
     // Python development
     "ms-python.python",
     "ms-python.vscode-pylance",
-
+    // PDF viewing and page-to-image extraction for AI workflows
+    "TimHaintz.pdf-toolkit",
     // Mermaid diagram preview
     "bierner.markdown-mermaid",
-
     // Markdown linting
     "DavidAnson.vscode-markdownlint",
-
     // EditorConfig for consistent formatting
     "EditorConfig.EditorConfig"
   ]

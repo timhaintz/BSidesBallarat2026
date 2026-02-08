@@ -35,12 +35,14 @@ This toolchain supports a specific "Hero Flow" to be performed live on stage:
 
 ### 3.2. The "Eyes" (Rendering)
 
-- **Component:** Custom VS Code Extension (`pdf-viewer`)
+- **Component:** [PDF Toolkit](https://marketplace.visualstudio.com/items?itemName=TimHaintz.pdf-toolkit) (`TimHaintz.pdf-toolkit`)
+- **Type:** VS Code Extension (published on Marketplace, included in `.vscode/extensions.json`)
 - **Function:**
-  - Accepts a file path or URL.
-  - Converts PDF pages to high-res images (screenshots).
-  - Displays images in a custom editor tab so the Multimodal LLM can "see" the diagrams.
-- **Key Command:** `pdfviewer.renderToImages` (exposed to the Agent).
+  - Opens PDF files natively in VS Code.
+  - Extracts pages as PNG/JPEG images (screenshot) for AI-assisted workflows.
+  - Extracts embedded raster images from PDFs.
+  - Images can be added directly to GitHub Copilot Chat via `#file:` references.
+- **Key Commands:** `PDF Toolkit: Screenshot All Pages`, `PDF Toolkit: Screenshot Current Page`, `PDF Toolkit: Screenshot Custom...`
 
 ### 3.3. The "Visualizer" (Output)
 
@@ -115,9 +117,10 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
 
 ### Phase 2: The "Eyes" (Extension)
 
-- [ ] Scaffold a basic VS Code extension (`yo code`).
-- [ ] Implement the PDF → Image logic.
-- [ ] Register the `renderToImages` command.
+- [x] Publish [PDF Toolkit](https://marketplace.visualstudio.com/items?itemName=TimHaintz.pdf-toolkit) extension to the Marketplace.
+- [x] PDF → Image screenshot extraction (all pages, current page, custom).
+- [x] Embedded image extraction from PDFs.
+- [x] Copilot Chat integration via `#file:` references.
 
 ### Phase 3: The "Glue" (Automation)
 

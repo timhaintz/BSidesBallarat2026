@@ -60,11 +60,13 @@ When modifying workspace config, always use workspace-relative paths (`${workspa
 - API keys are referenced via `${input:...}` variables — never hardcode secrets.
 - The `.env.example` file documents required environment variables.
 
-### Custom Extension
+### PDF Toolkit Extension
 
-- The extension lives in `extension/` and follows the standard VS Code extension scaffold.
-- It exposes the command `bsides.renderPdf` which takes a file URI and renders the PDF as an image in a webview panel.
-- Use `pdf.js` (or equivalent) for PDF rasterization — avoid native dependencies for portability.
+- The project uses [PDF Toolkit](https://marketplace.visualstudio.com/items?itemName=TimHaintz.pdf-toolkit) (`TimHaintz.pdf-toolkit`) — a published VS Code extension by Tim Haintz.
+- It opens PDFs natively in VS Code and extracts pages as PNG/JPEG images for AI workflows.
+- Key commands: `PDF Toolkit: Screenshot All Pages`, `PDF Toolkit: Screenshot Current Page`, `PDF Toolkit: Screenshot Custom...`
+- Extracted images can be added directly to GitHub Copilot Chat via `#file:` references.
+- Source code: [github.com/timhaintz/pdf-toolkit](https://github.com/timhaintz/pdf-toolkit)
 
 ### Demo Flow
 
