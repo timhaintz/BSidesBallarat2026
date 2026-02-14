@@ -36,9 +36,12 @@ See [PRD.md](PRD.md) for the full product requirements.
 ### File Organisation
 
 ```text
-.vscode/          → VS Code workspace config (mcp.json, settings.json, extensions.json)
-extension/         → Custom VS Code extension source (TypeScript)
-servers/           → Python/Node MCP server code and wrappers
+.vscode/          → VS Code workspace config (mcp.json, settings.json, extensions.json, launch.json, tasks.json)
+extension/         → @researcher Chat Participant extension (TypeScript)
+  src/             → TypeScript source (extension.ts, participant.ts, tools/)
+  out/             → Compiled JavaScript (gitignored)
+  package.json     → Extension manifest (chatParticipants, languageModelTools)
+servers/           → Python/Node MCP server code and wrappers (if needed)
 papers/            → Downloaded research PDFs and analysis Markdown files
 PDF-Screenshots/   → PNG/JPEG images extracted from PDFs via PDF Toolkit
 ```
@@ -90,6 +93,40 @@ When modifying workspace config, always use workspace-relative paths (`${workspa
 - Key commands: `PDF Toolkit: Screenshot All Pages`, `PDF Toolkit: Screenshot Current Page`, `PDF Toolkit: Screenshot Custom...`
 - Extracted images can be added directly to GitHub Copilot Chat via `#file:` references.
 - Source code: [github.com/timhaintz/pdf-toolkit](https://github.com/timhaintz/pdf-toolkit)
+
+### @researcher Chat Participant Extension
+
+The `@researcher` Chat Participant is a custom VS Code extension (in `extension/`) that provides the "glue" for the demo workflow. It uses **VS Code extension APIs only** — no external MCP server process needed.
+
+#### Architecture
+
+- **Chat Participant** (`@researcher`) — registered via `vscode.chat.createChatParticipant()`. Handles natural language requests in Copilot Chat.
+- **LM Tools** — registered via `vscode.lm.registerTool()`. Available to any LLM in VS Code:
+  - `bsides-researcher_downloadArxivPaper` — downloads PDFs from arXiv using Node.js `https` module.
+  - `bsides-researcher_screenshotPdf` — invokes PDF Toolkit's screenshot command via `vscode.commands.executeCommand()`.
+- **Slash Commands:**
+  - `/find <topic>` — search guidance for a security topic
+  - `/download <arxivId> [filename]` — download a paper from arXiv
+  - `/render <path>` — extract page screenshots from a PDF
+  - `/workflow <description>` — full pipeline walkthrough
+
+#### Developing the Extension
+
+```bash
+cd extension
+npm install
+npm run compile    # or: npm run watch
+```
+
+Press **F5** in VS Code to launch the Extension Development Host with the extension loaded.
+
+#### Key Design Decisions
+
+- **No separate MCP server** — tools run in-process via `vscode.lm.registerTool()`, not as a stdio MCP server. This eliminates process management complexity.
+- **No `yo code` / Yeoman** — the extension was scaffolded manually (just `package.json`, `tsconfig.json`, and TypeScript source). No third-party scaffolding tools needed.
+- **PDF downloads use Node.js `https`** — with redirect handling and a `User-Agent` header (arXiv requires it). No external HTTP libraries.
+- **PDF Toolkit integration** — screenshots are triggered via `vscode.commands.executeCommand('pdf-toolkit.screenshotAllPages')`. This requires the PDF Toolkit extension to be installed.
+- **Requires VS Code 1.99+** — for `vscode.lm.registerTool()` API support.
 
 ### Demo Flow
 
@@ -161,9 +198,9 @@ The Semantic Scholar MCP server does **not** download raw PDFs. Its `get_paper_f
 | `uv` | Python virtual environments, package management, and project commands (preferred) |
 | `uvx` | Running external Python tools in isolated environments (like `npx` for Python) |
 | `npx` | Running Node.js tools |
-| `yo code` | Scaffolding VS Code extensions |
 | `ruff` | Python linting & formatting |
 | `eslint` | TypeScript linting |
 | `Semantic Scholar API` | Academic paper search |
 | `semantic-scholar-mcp` | MCP server for Semantic Scholar (run via `uvx`, not `uv run`) |
 | `PDF Toolkit` | VS Code extension for PDF viewing and image extraction |
+| `@researcher` extension | Chat Participant + LM tools for download & screenshot automation (in `extension/`) |

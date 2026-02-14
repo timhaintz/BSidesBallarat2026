@@ -1,0 +1,98 @@
+{
+  "name": "bsides-researcher",
+  "displayName": "BSides Security Researcher",
+  "description": "A @researcher Chat Participant for security research workflows — discover, download, render, and analyse academic papers without leaving VS Code.",
+  "version": "0.1.0",
+  "publisher": "TimHaintz",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.99.0"
+  },
+  "categories": [
+    "Chat"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "chatParticipants": [
+      {
+        "id": "bsides.researcher",
+        "fullName": "Security Researcher",
+        "name": "researcher",
+        "description": "Discover, download, and analyse security research papers. Try: @researcher find papers on prompt injection",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "find",
+            "description": "Search for academic papers on a security topic"
+          },
+          {
+            "name": "download",
+            "description": "Download a paper from arXiv by its ID (e.g., 2502.05174)"
+          },
+          {
+            "name": "render",
+            "description": "Open a downloaded PDF and extract page screenshots"
+          },
+          {
+            "name": "workflow",
+            "description": "Run the full pipeline: search → download → render → analyse"
+          }
+        ]
+      }
+    ],
+    "languageModelTools": [
+      {
+        "name": "bsides-researcher_downloadArxivPaper",
+        "displayName": "Download arXiv Paper",
+        "modelDescription": "Downloads a PDF from arXiv given an arXiv ID (e.g., '2502.05174') and saves it to the papers/ directory in the workspace. Returns the local file path of the downloaded PDF.",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "arxivId": {
+              "type": "string",
+              "description": "The arXiv paper ID (e.g., '2502.05174' or '1706.03762')"
+            },
+            "filename": {
+              "type": "string",
+              "description": "Optional kebab-case filename without extension (e.g., 'melon-provable-defense'). If omitted, the arXiv ID is used."
+            }
+          },
+          "required": [
+            "arxivId"
+          ]
+        }
+      },
+      {
+        "name": "bsides-researcher_screenshotPdf",
+        "displayName": "Screenshot PDF Pages",
+        "modelDescription": "Opens a PDF file in VS Code using PDF Toolkit and extracts all pages as PNG images to the PDF-Screenshots/ directory. Returns the paths of the extracted screenshot images.",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "pdfPath": {
+              "type": "string",
+              "description": "The workspace-relative path to the PDF file (e.g., 'papers/melon-provable-defense.pdf')"
+            }
+          },
+          "required": [
+            "pdfPath"
+          ]
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.99.0",
+    "typescript": "^5.5.0"
+  }
+}

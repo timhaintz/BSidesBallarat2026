@@ -18,6 +18,7 @@ yarn-error.log*
 
 # ===== VS Code Extension =====
 extension/out/
+extension/node_modules/
 extension/*.vsix
 
 # ===== OS =====
@@ -28,7 +29,6 @@ Thumbs.db
 # .vscode/ is intentionally tracked for workspace sharing
 # but user-local state is not:
 .vscode/.ropeproject/
-.vscode/launch.json
 
 # ===== Downloaded artifacts =====
 /tmp/

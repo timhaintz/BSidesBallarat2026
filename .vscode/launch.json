@@ -1,0 +1,19 @@
+{
+  // BSides Ballarat 2026 — Launch Configurations
+  // Press F5 to launch the Extension Development Host for testing.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run @researcher Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/extension"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/extension/out/**/*.js"
+      ],
+      "preLaunchTask": "npm: compile - extension"
+    }
+  ]
+}

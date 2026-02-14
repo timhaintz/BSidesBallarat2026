@@ -1,0 +1,23 @@
+{
+  // BSides Ballarat 2026 — Tasks
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "compile",
+      "path": "extension",
+      "label": "npm: compile - extension",
+      "group": "build",
+      "problemMatcher": "$tsc"
+    },
+    {
+      "type": "npm",
+      "script": "watch",
+      "path": "extension",
+      "label": "npm: watch - extension",
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": "$tsc-watch"
+    }
+  ]
+}

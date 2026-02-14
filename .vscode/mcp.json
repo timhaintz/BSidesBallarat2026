@@ -16,12 +16,10 @@
         "SEMANTIC_SCHOLAR_API_KEY": "${input:semanticScholarApiKey}"
       }
     }
-    // Phase 3: Local tools for PDF download + trigger (if needed)
-    // "localTools": {
-    //   "type": "stdio",
-    //   "command": "python",
-    //   "args": ["${workspaceFolder}/servers/paper-tools/main.py"]
-    // }
+    // Phase 3: LM tools (download + screenshot) are provided by
+    // the @researcher Chat Participant extension in extension/.
+    // No separate MCP server needed — tools run in-process via
+    // vscode.lm.registerTool().
   },
   "inputs": [
     {

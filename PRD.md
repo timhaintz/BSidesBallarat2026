@@ -52,8 +52,15 @@ This toolchain supports a specific "Hero Flow" to be performed live on stage:
 
 ### 3.4. The "Glue" (Control Plane)
 
-- **Option A (Simple):** Use the default VS Code Copilot/Chat Agent with prompt engineering to invoke tools.
-- **Option B (Robust):** A Custom Chat Participant (`@researcher`) using the **GitHub Copilot SDK**. This ensures deterministic execution of the PDF download and render commands.
+- **Component:** `@researcher` Chat Participant — a custom VS Code extension
+- **Type:** VS Code Extension (TypeScript, uses `vscode.chat.createChatParticipant()` API)
+- **Function:**
+  - Registers a `@researcher` Chat Participant in GitHub Copilot Chat.
+  - Registers LM tools via `vscode.lm.registerTool()` for paper download and PDF rendering.
+  - Chains the full workflow: search → download → render → analyse → visualise.
+  - Uses `fetch()` for arXiv PDF downloads (no external MCP server needed).
+  - Invokes PDF Toolkit commands via `vscode.commands.executeCommand()` for screenshot extraction.
+- **Why this approach?** No separate process, no MCP server overhead — everything runs in-process inside VS Code. The Chat Participant gives users a natural `@researcher find prompt injection papers` experience.
 
 ## 4. Repository Structure
 
@@ -90,13 +97,14 @@ Must define the following servers using dynamic `${workspaceFolder}` paths:
 - `semantic-scholar` (via `uv`)
 - `local-tools` (Custom Python script for file handling, if needed)
 
-### 5.2. Custom Extension Capabilities
+### 5.2. `@researcher` Chat Participant Extension
 
-The extension must expose a command `bsides.renderPdf` that:
+The extension registers a `@researcher` Chat Participant and LM tools:
 
-1. Takes a `uri` or `path` as an argument.
-2. Uses a library (e.g., `pdf.js` or system tools) to rasterize the PDF.
-3. Opens a webview panel displaying the image.
+1. **Chat Participant** (`@researcher`) — handles natural language requests like "find papers on prompt injection" or "download and render paper 2502.05174".
+2. **LM Tool: `download_arxiv_paper`** — downloads a PDF from arXiv given an arXiv ID, saves to `papers/` with a kebab-case filename.
+3. **LM Tool: `screenshot_pdf`** — invokes PDF Toolkit's `Screenshot All Pages` command via `vscode.commands.executeCommand()` to extract page images.
+4. The participant uses the VS Code Language Model API (`vscode.lm.sendChatRequest()`) for AI-powered analysis and Mermaid diagram generation.
 
 ### 5.3. Mermaid Integration
 
@@ -130,8 +138,11 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
 
 ### Phase 3: The "Glue" (Automation)
 
-- [ ] Create a "Tool" (Python or TypeScript) that chains the download + render steps.
-- [ ] (Optional) Wrap this in a `@researcher` Chat Participant for the "one-click" demo experience.
+- [ ] Scaffold `@researcher` Chat Participant extension in `extension/` directory.
+- [ ] Implement `download_arxiv_paper` LM tool (fetch PDF from arXiv, save to `papers/`).
+- [ ] Implement `screenshot_pdf` LM tool (invoke PDF Toolkit via `vscode.commands.executeCommand()`).
+- [ ] Register `@researcher` Chat Participant with intent detection and workflow chaining.
+- [ ] Test end-to-end: `@researcher find and analyse prompt injection papers`.
 
 ## 7. Success Criteria
 
