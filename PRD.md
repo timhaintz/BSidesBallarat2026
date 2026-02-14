@@ -115,8 +115,11 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
 ### Phase 1: Core Setup
 
 - [x] Initialize Git repo with `.vscode/mcp.json`.
-- [ ] Verify `semantic-scholar-mcp` works via the Chat panel.
-- [ ] Verify Mermaid preview works via the `bierner.markdown-mermaid` extension.
+- [x] Verify `semantic-scholar-mcp` works via the Chat panel.
+  - Queried "prompt injection" — returned 2,517 results, reviewed top 15.
+  - Downloaded 4 highlighted papers as PDFs to `papers/` directory.
+- [x] Verify Mermaid preview works via the `bierner.markdown-mermaid` extension.
+  - Generated `papers/melon-paper-analysis.md` with 3 Mermaid diagrams (detection pipeline, attack taxonomy, sequence diagram) from the MELON paper.
 
 ### Phase 2: The "Eyes" (Extension)
 
@@ -132,7 +135,11 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
 
 ## 7. Success Criteria
 
-- [ ] User can type **ONE prompt** to find a paper.
-- [ ] User can type **ONE prompt** to download and view the PDF.
-- [ ] The PDF is visible as an **image** (not text).
-- [ ] A **Mermaid diagram** is successfully generated from the context of that paper.
+- [x] User can type **ONE prompt** to find a paper.
+  - Demonstrated: "find latest prompt injection papers" → Semantic Scholar MCP returned 15 results.
+- [x] User can type **ONE prompt** to download and view the PDF.
+  - Demonstrated: "download the 4 highlighted papers" → PDFs saved to `papers/`.
+- [x] The PDF is visible as an **image** (not text).
+  - Demonstrated: PDF Toolkit `Screenshot All Pages` extracted MELON paper pages as images, attached to Copilot Chat.
+- [x] A **Mermaid diagram** is successfully generated from the context of that paper.
+  - Demonstrated: 3 Mermaid diagrams generated in `papers/melon-paper-analysis.md` from MELON paper analysis.

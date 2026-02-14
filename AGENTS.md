@@ -39,6 +39,8 @@ See [PRD.md](PRD.md) for the full product requirements.
 .vscode/          → VS Code workspace config (mcp.json, settings.json, extensions.json)
 extension/         → Custom VS Code extension source (TypeScript)
 servers/           → Python/Node MCP server code and wrappers
+papers/            → Downloaded research PDFs and analysis Markdown files
+PDF-Screenshots/   → PNG/JPEG images extracted from PDFs via PDF Toolkit
 ```
 
 ### Git Conventions
@@ -70,6 +72,17 @@ When modifying workspace config, always use workspace-relative paths (`${workspa
 - API keys are referenced via `${input:...}` variables — never hardcode secrets.
 - The `.env.example` file documents required environment variables.
 
+### Semantic Scholar MCP Server
+
+- **Package:** `semantic-scholar-mcp` by Ante Kapetanovic (akapet00) — community, MIT license.
+- **Security:** Audited as LOW RISK — clean code, proper SSL, Pydantic models, no shell exec, 3 runtime deps (FastMCP, httpx, pydantic).
+- **Runs via `uvx`**, not `uv run`. This is critical:
+  - `uv run` = runs commands in the **project's** virtual environment (`.venv/`).
+  - `uvx` = runs external tools in **isolated** ephemeral environments (like `npx` for Node).
+  - The MCP server is an external tool, so `.vscode/mcp.json` uses `"command": "uvx"` with `"args": ["semantic-scholar-mcp"]`.
+- **Known limitation:** The `fields` parameter in search tools (e.g., `search_papers`) may not return all requested fields (often returns only titles). Use `get_paper` with a known `paperId` for full metadata, or construct arXiv PDF URLs directly (e.g., `https://arxiv.org/pdf/XXXX.XXXXX`).
+- **Requires:** `SEMANTIC_SCHOLAR_API_KEY` (free tier available at [semanticscholar.org/product/api](https://www.semanticscholar.org/product/api)).
+
 ### PDF Toolkit Extension
 
 - The project uses [PDF Toolkit](https://marketplace.visualstudio.com/items?itemName=TimHaintz.pdf-toolkit) (`TimHaintz.pdf-toolkit`) — a published VS Code extension by Tim Haintz.
@@ -81,6 +94,22 @@ When modifying workspace config, always use workspace-relative paths (`${workspa
 ### Demo Flow
 
 The live demo follows this sequence: **Discover → Acquire → Render → Analyse → Visualise**. When implementing features, consider how they fit into this flow.
+
+### Research Workflow (Proven Pattern)
+
+This workflow has been validated end-to-end:
+
+1. **Discover** — Query Semantic Scholar MCP for papers (e.g., "prompt injection").
+2. **Acquire** — Download PDFs via arXiv URLs to `papers/` directory.
+3. **Render** — Open PDFs in VS Code with PDF Toolkit; use `Screenshot All Pages` to extract page images to `PDF-Screenshots/`.
+4. **Analyse** — Attach extracted images to Copilot Chat via `#file:` references for multimodal analysis.
+5. **Visualise** — Generate Mermaid diagrams in a Markdown analysis file (e.g., `papers/<name>-paper-analysis.md`); preview with `bierner.markdown-mermaid` extension.
+
+### Papers Directory Convention
+
+- Downloaded PDFs go in `papers/` with kebab-case descriptive names (e.g., `melon-provable-defense-prompt-injection.pdf`).
+- Per-paper analysis Markdown files go alongside the PDFs (e.g., `papers/melon-paper-analysis.md`).
+- The `papers/` directory is gitignored (binary PDFs should not be committed). Analysis `.md` files can be committed selectively.
 
 ## Working on This Project
 
@@ -106,9 +135,12 @@ The live demo follows this sequence: **Discover → Acquire → Render → Analy
 
 | Tool | Purpose |
 |---|---|
-| `uv` | Python virtual environments and package management (preferred) |
+| `uv` | Python virtual environments, package management, and project commands (preferred) |
+| `uvx` | Running external Python tools in isolated environments (like `npx` for Python) |
 | `npx` | Running Node.js tools |
 | `yo code` | Scaffolding VS Code extensions |
 | `ruff` | Python linting & formatting |
 | `eslint` | TypeScript linting |
 | `Semantic Scholar API` | Academic paper search |
+| `semantic-scholar-mcp` | MCP server for Semantic Scholar (run via `uvx`, not `uv run`) |
+| `PDF Toolkit` | VS Code extension for PDF viewing and image extraction |
