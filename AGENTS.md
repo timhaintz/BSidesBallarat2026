@@ -100,10 +100,33 @@ The live demo follows this sequence: **Discover → Acquire → Render → Analy
 This workflow has been validated end-to-end:
 
 1. **Discover** — Query Semantic Scholar MCP for papers (e.g., "prompt injection").
-2. **Acquire** — Download PDFs via arXiv URLs to `papers/` directory.
+2. **Acquire** — Download PDFs from arXiv to `papers/` directory (see below).
 3. **Render** — Open PDFs in VS Code with PDF Toolkit; use `Screenshot All Pages` to extract page images to `PDF-Screenshots/`.
 4. **Analyse** — Attach extracted images to Copilot Chat via `#file:` references for multimodal analysis.
 5. **Visualise** — Generate Mermaid diagrams in a Markdown analysis file (e.g., `papers/<name>-paper-analysis.md`); preview with `bierner.markdown-mermaid` extension.
+
+### Downloading Papers from arXiv
+
+The Semantic Scholar MCP server does **not** download raw PDFs. Its `get_paper_fulltext` tool converts PDFs to Markdown, which is not what we want — we need the actual PDF for PDF Toolkit.
+
+**Proven download process:**
+
+1. Find the paper's arXiv ID from Semantic Scholar results (e.g., `2502.05174`).
+2. Construct the direct PDF URL: `https://arxiv.org/pdf/<ARXIV_ID>` (e.g., `https://arxiv.org/pdf/2502.05174`).
+3. Download using PowerShell:
+
+   ```powershell
+   Invoke-WebRequest -Uri "https://arxiv.org/pdf/2502.05174" -OutFile "papers/melon-provable-defense-prompt-injection.pdf" -UserAgent "Mozilla/5.0"
+   ```
+
+4. Use kebab-case descriptive filenames (e.g., `adaptive-attacks-indirect-prompt-injection.pdf`).
+
+**Notes:**
+
+- The `-UserAgent` parameter is needed — arXiv may reject requests without it.
+- Not all papers are on arXiv. For non-arXiv papers, check if the `externalIds` from `get_paper` contain a DOI or other identifier to find a direct PDF link from the publisher.
+- **`openAccessPdf` is unreliable** — tested against the Semantic Scholar API (both direct and via MCP) and it returns empty URLs even for well-known open-access papers (e.g., "Attention is All You Need"). Do not depend on this field for downloading PDFs.
+- Do **not** use `get_paper_fulltext` — it converts to Markdown and bypasses PDF Toolkit and won't have access to the images in the PDF.
 
 ### Papers Directory Convention
 
