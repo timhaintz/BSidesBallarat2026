@@ -17,7 +17,7 @@
       }
     }
     // Phase 3: LM tools (download + screenshot) are provided by
-    // the @researcher Chat Participant extension in extension/.
+    // the @bsides-researcher Chat Participant extension in extension/.
     // No separate MCP server needed — tools run in-process via
     // vscode.lm.registerTool().
   },

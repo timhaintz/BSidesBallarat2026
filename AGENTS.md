@@ -37,7 +37,7 @@ See [PRD.md](PRD.md) for the full product requirements.
 
 ```text
 .vscode/          → VS Code workspace config (mcp.json, settings.json, extensions.json, launch.json, tasks.json)
-extension/         → @researcher Chat Participant extension (TypeScript)
+extension/         → @bsides-researcher Chat Participant extension (TypeScript)
   src/             → TypeScript source (extension.ts, participant.ts, tools/)
   out/             → Compiled JavaScript (gitignored)
   package.json     → Extension manifest (chatParticipants, languageModelTools)
@@ -94,13 +94,13 @@ When modifying workspace config, always use workspace-relative paths (`${workspa
 - Extracted images can be added directly to GitHub Copilot Chat via `#file:` references.
 - Source code: [github.com/timhaintz/pdf-toolkit](https://github.com/timhaintz/pdf-toolkit)
 
-### @researcher Chat Participant Extension
+### @bsides-researcher Chat Participant Extension
 
-The `@researcher` Chat Participant is a custom VS Code extension (in `extension/`) that provides the "glue" for the demo workflow. It uses **VS Code extension APIs only** — no external MCP server process needed.
+The `@bsides-researcher` Chat Participant is a custom VS Code extension (in `extension/`) that provides the "glue" for the demo workflow. It uses **VS Code extension APIs only** — no external MCP server process needed.
 
 #### Architecture
 
-- **Chat Participant** (`@researcher`) — registered via `vscode.chat.createChatParticipant()`. Handles natural language requests in Copilot Chat.
+- **Chat Participant** (`@bsides-researcher`) — registered via `vscode.chat.createChatParticipant()`. Handles natural language requests in Copilot Chat.
 - **LM Tools** — registered via `vscode.lm.registerTool()`. Available to any LLM in VS Code:
   - `bsides-researcher_downloadArxivPaper` — downloads PDFs from arXiv using Node.js `https` module.
   - `bsides-researcher_screenshotPdf` — invokes PDF Toolkit's screenshot command via `vscode.commands.executeCommand()`.
@@ -203,4 +203,4 @@ The Semantic Scholar MCP server does **not** download raw PDFs. Its `get_paper_f
 | `Semantic Scholar API` | Academic paper search |
 | `semantic-scholar-mcp` | MCP server for Semantic Scholar (run via `uvx`, not `uv run`) |
 | `PDF Toolkit` | VS Code extension for PDF viewing and image extraction |
-| `@researcher` extension | Chat Participant + LM tools for download & screenshot automation (in `extension/`) |
+| `@bsides-researcher` extension | Chat Participant + LM tools for download & screenshot automation (in `extension/`) |

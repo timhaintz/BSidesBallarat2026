@@ -52,15 +52,15 @@ This toolchain supports a specific "Hero Flow" to be performed live on stage:
 
 ### 3.4. The "Glue" (Control Plane)
 
-- **Component:** `@researcher` Chat Participant — a custom VS Code extension
+- **Component:** `@bsides-researcher` Chat Participant — a custom VS Code extension
 - **Type:** VS Code Extension (TypeScript, uses `vscode.chat.createChatParticipant()` API)
 - **Function:**
-  - Registers a `@researcher` Chat Participant in GitHub Copilot Chat.
+  - Registers a `@bsides-researcher` Chat Participant in GitHub Copilot Chat.
   - Registers LM tools via `vscode.lm.registerTool()` for paper download and PDF rendering.
   - Chains the full workflow: search → download → render → analyse → visualise.
   - Uses `fetch()` for arXiv PDF downloads (no external MCP server needed).
   - Invokes PDF Toolkit commands via `vscode.commands.executeCommand()` for screenshot extraction.
-- **Why this approach?** No separate process, no MCP server overhead — everything runs in-process inside VS Code. The Chat Participant gives users a natural `@researcher find prompt injection papers` experience.
+- **Why this approach?** No separate process, no MCP server overhead — everything runs in-process inside VS Code. The Chat Participant gives users a natural `@bsides-researcher find prompt injection papers` experience.
 
 ## 4. Repository Structure
 
@@ -97,11 +97,11 @@ Must define the following servers using dynamic `${workspaceFolder}` paths:
 - `semantic-scholar` (via `uv`)
 - `local-tools` (Custom Python script for file handling, if needed)
 
-### 5.2. `@researcher` Chat Participant Extension
+### 5.2. `@bsides-researcher` Chat Participant Extension
 
-The extension registers a `@researcher` Chat Participant and LM tools:
+The extension registers a `@bsides-researcher` Chat Participant and LM tools:
 
-1. **Chat Participant** (`@researcher`) — handles natural language requests like "find papers on prompt injection" or "download and render paper 2502.05174".
+1. **Chat Participant** (`@bsides-researcher`) — handles natural language requests like "find papers on prompt injection" or "download and render paper 2502.05174".
 2. **LM Tool: `download_arxiv_paper`** — downloads a PDF from arXiv given an arXiv ID, saves to `papers/` with a kebab-case filename.
 3. **LM Tool: `screenshot_pdf`** — invokes PDF Toolkit's `Screenshot All Pages` command via `vscode.commands.executeCommand()` to extract page images.
 4. The participant uses the VS Code Language Model API (`vscode.lm.sendChatRequest()`) for AI-powered analysis and Mermaid diagram generation.
@@ -138,11 +138,11 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
 
 ### Phase 3: The "Glue" (Automation)
 
-- [ ] Scaffold `@researcher` Chat Participant extension in `extension/` directory.
+- [ ] Scaffold `@bsides-researcher` Chat Participant extension in `extension/` directory.
 - [ ] Implement `download_arxiv_paper` LM tool (fetch PDF from arXiv, save to `papers/`).
 - [ ] Implement `screenshot_pdf` LM tool (invoke PDF Toolkit via `vscode.commands.executeCommand()`).
-- [ ] Register `@researcher` Chat Participant with intent detection and workflow chaining.
-- [ ] Test end-to-end: `@researcher find and analyse prompt injection papers`.
+- [ ] Register `@bsides-researcher` Chat Participant with intent detection and workflow chaining.
+- [ ] Test end-to-end: `@bsides-researcher find and analyse prompt injection papers`.
 
 ## 7. Success Criteria
 

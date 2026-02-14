@@ -4,7 +4,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run @researcher Extension",
+      "name": "Run @bsides-researcher Extension",
       "type": "extensionHost",
       "request": "launch",
       "args": [

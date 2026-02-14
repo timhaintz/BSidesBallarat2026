@@ -1,8 +1,8 @@
 /**
- * BSides Security Researcher — VS Code Extension
+ * BSides Researcher — VS Code Extension
  *
- * Registers the @researcher Chat Participant and LM tools for the
- * BSides Ballarat 2026 demo. Enables security researchers to discover,
+ * Registers the @bsides-researcher Chat Participant and LM tools for the
+ * BSides Ballarat 2026 demo. Enables researchers to discover,
  * download, render, and analyse academic papers without leaving VS Code.
  *
  * Tools:
@@ -10,7 +10,7 @@
  *   - bsides-researcher_screenshotPdf       — extract page images via PDF Toolkit
  *
  * Chat Participant:
- *   - @researcher — natural language interface with /find, /download, /render, /workflow commands
+ *   - @bsides-researcher — natural language interface with /find, /download, /render, /workflow commands
  */
 
 import * as vscode from "vscode";
@@ -40,7 +40,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
   // ── Chat Participant ──────────────────────────────────────────────────
   const researcher = vscode.chat.createChatParticipant(
-    "bsides.researcher",
+    "bsides.bsides-researcher",
     handleResearcherRequest
   );
   researcher.iconPath = new vscode.ThemeIcon("shield");

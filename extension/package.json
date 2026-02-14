@@ -1,7 +1,7 @@
 {
   "name": "bsides-researcher",
-  "displayName": "BSides Security Researcher",
-  "description": "A @researcher Chat Participant for security research workflows — discover, download, render, and analyse academic papers without leaving VS Code.",
+  "displayName": "BSides Researcher",
+  "description": "A @bsides-researcher Chat Participant for research workflows — discover, download, render, and analyse academic papers without leaving VS Code.",
   "version": "0.1.0",
   "publisher": "TimHaintz",
   "license": "MIT",
@@ -16,10 +16,10 @@
   "contributes": {
     "chatParticipants": [
       {
-        "id": "bsides.researcher",
-        "fullName": "Security Researcher",
-        "name": "researcher",
-        "description": "Discover, download, and analyse security research papers. Try: @researcher find papers on prompt injection",
+        "id": "bsides.bsides-researcher",
+        "fullName": "BSides Researcher",
+        "name": "bsides-researcher",
+        "description": "Discover, download, and analyse research papers. Try: @bsides-researcher find papers on prompt injection",
         "isSticky": true,
         "commands": [
           {

@@ -1,19 +1,19 @@
 /**
- * @researcher Chat Participant Handler
+ * @bsides-researcher Chat Participant Handler
  *
  * Handles natural language requests in GitHub Copilot Chat.
  * Supports slash commands: /find, /download, /render, /workflow
  *
- * The participant acts as a security research assistant, helping
+ * The participant acts as a research assistant, helping
  * users discover papers, download PDFs, extract screenshots, and
  * generate analysis with Mermaid diagrams.
  */
 
 import * as vscode from "vscode";
 
-/** System prompt that defines the @researcher persona and capabilities. */
-const SYSTEM_PROMPT = `You are a Security Research Assistant for BSides Ballarat 2026.
-You help security researchers discover, download, render, and analyse academic papers about cybersecurity topics.
+/** System prompt that defines the @bsides-researcher persona and capabilities. */
+const SYSTEM_PROMPT = `You are a Research Assistant for BSides Ballarat 2026.
+You help researchers discover, download, render, and analyse academic papers on any topic, with a focus on cybersecurity.
 
 Your capabilities:
 1. **Discover** — Search for academic papers using the Semantic Scholar MCP server (available as a separate MCP tool).
@@ -31,7 +31,7 @@ Always use kebab-case for filenames (e.g., "prompt-injection-defense.pdf").
 Papers are saved to the papers/ directory and screenshots to PDF-Screenshots/.`;
 
 /**
- * Handle incoming chat requests to @researcher.
+ * Handle incoming chat requests to @bsides-researcher.
  */
 export async function handleResearcherRequest(
   request: vscode.ChatRequest,
@@ -71,7 +71,7 @@ async function handleFind(
   if (!topic) {
     stream.markdown(
       "Please provide a topic to search for. Example:\n\n" +
-        "`@researcher /find prompt injection defenses`"
+        "`@bsides-researcher /find prompt injection defenses`"
     );
     return {};
   }
@@ -83,9 +83,9 @@ async function handleFind(
 Help them by:
 1. Suggesting they use the Semantic Scholar MCP tool (search_papers) to search for papers on this topic.
 2. If you know specific relevant arXiv paper IDs on this topic, list them with titles.
-3. Remind them they can use @researcher /download <arxivId> to download any paper.
+3. Remind them they can use @bsides-researcher /download <arxivId> to download any paper.
 
-Be specific and helpful. Focus on security research.`,
+Be specific and helpful.`,
     request,
     stream,
     token
@@ -111,7 +111,7 @@ async function handleDownload(
   if (!arxivIdMatch) {
     stream.markdown(
       "Please provide an arXiv ID. Example:\n\n" +
-        "`@researcher /download 2502.05174 melon-provable-defense`\n\n" +
+        "`@bsides-researcher /download 2502.05174 melon-provable-defense`\n\n" +
         "Format: `/download <arxivId> [optional-filename]`"
     );
     return {};
@@ -165,7 +165,7 @@ async function handleRender(
   if (!pdfPath) {
     stream.markdown(
       "Please provide the path to a PDF file. Example:\n\n" +
-        "`@researcher /render papers/melon-provable-defense.pdf`"
+        "`@bsides-researcher /render papers/melon-provable-defense.pdf`"
     );
     return {};
   }
@@ -211,7 +211,7 @@ async function handleWorkflow(
   if (!prompt) {
     stream.markdown(
       "Please describe what you want to research. Example:\n\n" +
-        "`@researcher /workflow find and analyse papers on prompt injection defenses`"
+        "`@bsides-researcher /workflow find and analyse papers on prompt injection defenses`"
     );
     return {};
   }
@@ -221,8 +221,8 @@ async function handleWorkflow(
 
 Guide them through the complete pipeline:
 1. **Discover** — Suggest using Semantic Scholar MCP (search_papers tool) to find relevant papers.
-2. **Acquire** — Once papers are found, they can use @researcher /download <arxivId> <filename> to download PDFs.
-3. **Render** — After downloading, use @researcher /render papers/<filename>.pdf to extract screenshots.
+2. **Acquire** — Once papers are found, they can use @bsides-researcher /download <arxivId> <filename> to download PDFs.
+3. **Render** — After downloading, use @bsides-researcher /render papers/<filename>.pdf to extract screenshots.
 4. **Analyse** — Attach the screenshots to Copilot Chat for multimodal analysis.
 5. **Visualise** — Generate Mermaid diagrams for attack/defense flows.
 
