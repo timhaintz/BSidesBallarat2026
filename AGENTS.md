@@ -36,6 +36,7 @@ See [PRD.md](PRD.md) for the full product requirements.
 ### File Organisation
 
 ```text
+.github/agents/    → Custom Agent definition (bsides-researcher.md) — works in main VS Code window
 .vscode/          → VS Code workspace config (mcp.json, settings.json, extensions.json, launch.json, tasks.json)
 extension/         → @bsides-researcher Chat Participant extension (TypeScript)
   src/             → TypeScript source (extension.ts, participant.ts, tools/)
@@ -140,6 +141,35 @@ Press **Ctrl+Shift+D** to open the Run and Debug panel, select **"Run @bsides-re
 - **Human-in-the-loop confirmation** — the `screenshotPdf` tool uses `prepareInvocation()` to return `confirmationMessages`, which displays a "Continue" / "Cancel" dialog in Copilot Chat before each PDF is rendered. This gives the user control over which papers get screenshotted, especially useful in `/workflow` runs that process multiple papers.
 - **Screenshot followup suggestions** — `extension.ts` registers a `ChatFollowupProvider` on the researcher participant. When `sendToModel()` detects that screenshot directories were produced (by inspecting `bsides-researcher_screenshotPdf` tool results), it returns them as `ChatResult.metadata.screenshotDirs`. The followup provider then generates clickable suggestions like "Analyse {paperName} screenshots" for each directory, plus an "Analyse all" option when multiple papers were screenshotted. This lets the user choose which screenshots to feed into the analysis step.
 - **Screenshot polling** — after triggering `pdfToolkit.extractAllPages`, the tool polls for output files (up to 15 seconds, checking every 2 seconds) instead of using a fixed delay. This handles large PDFs that take longer to render.
+
+### BSides Researcher Custom Agent (`.github/agents/bsides-researcher.md`)
+
+The **BSides Researcher** Custom Agent provides the same research pipeline as the `@bsides-researcher` Chat Participant extension, but runs directly in the main VS Code window — no Extension Development Host needed.
+
+#### How It Works
+
+- Defined as a `.md` file in `.github/agents/` — VS Code auto-detects it and shows it in the Agent picker dropdown.
+- Uses the PEIL (Prompt Engineering Instructional Language) methodology for structured prompt design (see [timhaintz/PromptEngineering](https://github.com/timhaintz/PromptEngineering/tree/main/skills/peil)).
+- Hybrid prompt structure per [arXiv:2503.06926](https://arxiv.org/abs/2503.06926): opening statement (role + context) → bullet points (specific rules) → step-by-step pipeline.
+- Includes `semanticScholar/*` in the tools list so all Semantic Scholar MCP tools are available.
+- Downloads papers via `Invoke-WebRequest` in the terminal (same proven process as the extension).
+- Human-in-the-loop: the agent instructions tell it to ask for confirmation before downloading or rendering papers.
+
+#### Custom Agent vs. Chat Participant Extension
+
+| Feature | Custom Agent | Chat Participant Extension |
+|---|---|---|
+| **Runs in** | Main VS Code window | Extension Development Host (F5) |
+| **Setup** | Clone repo, open in VS Code | `npm install`, `npm run compile`, F5 |
+| **Semantic Scholar** | Via MCP tools | Via MCP tools (dynamic discovery) |
+| **PDF downloads** | Terminal `Invoke-WebRequest` | Node.js `https` module (LM tool) |
+| **PDF screenshots** | Terminal / VS Code commands | `pdfToolkit.extractAllPages` (LM tool) |
+| **Confirmation UI** | Text-based (agent asks) | `confirmationMessages` dialog |
+| **Followup suggestions** | Text-based (agent suggests) | `ChatFollowupProvider` buttons |
+| **Slash commands** | Natural language only | `/find`, `/download`, `/render`, `/workflow` |
+| **Portable** | Anyone who clones the repo | Requires extension compilation |
+
+Both approaches coexist — the custom agent is for daily use, the extension is for polished demos.
 
 ### Demo Flow
 
