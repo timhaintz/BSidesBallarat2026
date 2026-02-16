@@ -17,8 +17,8 @@ This toolchain supports a specific "Hero Flow" to be performed live on stage:
 1. **Discovery:** User asks the Agent to find the latest paper on a specific threat (e.g., "Prompt Injection").
    - *System:* Queries Semantic Scholar via MCP → Returns Abstract & PDF URL.
 2. **Acquisition & Rendering:** User asks the Agent to download and "show" the paper.
-   - *System:* Downloads PDF to `/tmp`.
-   - *System:* Triggers the **Custom PDF Viewer Extension** to convert the first page to an image and display it in the editor.
+   - *System:* Downloads PDF to `papers/` directory.
+   - *System:* Triggers **PDF Toolkit** to extract page images and display them in the editor.
 3. **Analysis & Visualization:** User asks the Agent to explain the attack flow visually.
    - *System:* Multimodal LLM analyzes the rendered image (screenshot).
    - *System:* Generates Mermaid code representing the attack architecture.
@@ -58,8 +58,10 @@ This toolchain supports a specific "Hero Flow" to be performed live on stage:
   - Registers a `@bsides-researcher` Chat Participant in GitHub Copilot Chat.
   - Registers LM tools via `vscode.lm.registerTool()` for paper download and PDF rendering.
   - Chains the full workflow: search → download → render → analyse → visualise.
-  - Uses `fetch()` for arXiv PDF downloads (no external MCP server needed).
+  - Uses Node.js `https` module for arXiv PDF downloads (with redirect handling and `User-Agent` header).
   - Invokes PDF Toolkit commands via `vscode.commands.executeCommand()` for screenshot extraction.
+  - **Agentic tool-calling loop** feeds tool results back to the LLM so it can chain actions (e.g., use downloaded filenames for screenshots).
+  - Declares `extensionDependencies: ["TimHaintz.pdf-toolkit"]` and explicitly activates PDF Toolkit before calling its commands.
 - **Why this approach?** No separate process, no MCP server overhead — everything runs in-process inside VS Code. The Chat Participant gives users a natural `@bsides-researcher find prompt injection papers` experience.
 
 ## 4. Repository Structure
@@ -71,14 +73,16 @@ BSidesBallarat2026/
 ├── .vscode/
 │   ├── mcp.json           # Workspace-local MCP Server config
 │   ├── extensions.json    # Recommended extensions (Python, MCP, Mermaid)
-│   └── settings.json      # Workspace settings
-├── extension/             # Source code for the Custom PDF Viewer Extension
+│   ├── settings.json      # Workspace settings
+│   ├── launch.json        # F5 launch config for Extension Development Host
+│   └── tasks.json         # Build tasks (compile, watch)
+├── extension/             # @bsides-researcher Chat Participant Extension
 │   ├── src/
 │   ├── package.json
 │   └── tsconfig.json
-├── servers/               # Local/Custom MCP Servers or wrappers
-│   ├── paper-tools/       # (Optional) Python script for "Download & Trigger" logic
-│   └── requirements.txt
+├── papers/                # Downloaded PDFs and analysis Markdown files
+├── PDF-Screenshots/       # Page images extracted by PDF Toolkit
+├── bsides-researcher.code-workspace  # Workspace file for Extension Dev Host
 ├── .env.example           # API Key template
 ├── .python-version        # Python version pin (managed by uv)
 ├── pyproject.toml         # Python project config & dependencies
@@ -138,10 +142,12 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
 
 ### Phase 3: The "Glue" (Automation)
 
-- [ ] Scaffold `@bsides-researcher` Chat Participant extension in `extension/` directory.
-- [ ] Implement `download_arxiv_paper` LM tool (fetch PDF from arXiv, save to `papers/`).
-- [ ] Implement `screenshot_pdf` LM tool (invoke PDF Toolkit via `vscode.commands.executeCommand()`).
-- [ ] Register `@bsides-researcher` Chat Participant with intent detection and workflow chaining.
+- [x] Scaffold `@bsides-researcher` Chat Participant extension in `extension/` directory.
+- [x] Implement `download_arxiv_paper` LM tool (fetch PDF from arXiv, save to `papers/`).
+- [x] Implement `screenshot_pdf` LM tool (invoke PDF Toolkit via `vscode.commands.executeCommand()`).
+- [x] Register `@bsides-researcher` Chat Participant with intent detection and workflow chaining.
+- [x] Agentic tool-calling loop — tool results fed back to LLM for multi-step workflows.
+- [x] Workspace file (`bsides-researcher.code-workspace`) for Extension Development Host.
 - [ ] Test end-to-end: `@bsides-researcher find and analyse prompt injection papers`.
 
 ## 7. Success Criteria

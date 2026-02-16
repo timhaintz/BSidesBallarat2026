@@ -13,7 +13,8 @@
         "semantic-scholar-mcp"
       ],
       "env": {
-        "SEMANTIC_SCHOLAR_API_KEY": "${input:semanticScholarApiKey}"
+        "SEMANTIC_SCHOLAR_API_KEY": "${input:semanticScholarApiKey}",
+        "UV_LINK_MODE": "copy"
       }
     }
     // Phase 3: LM tools (download + screenshot) are provided by

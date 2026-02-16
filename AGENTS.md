@@ -83,6 +83,7 @@ When modifying workspace config, always use workspace-relative paths (`${workspa
   - `uv run` = runs commands in the **project's** virtual environment (`.venv/`).
   - `uvx` = runs external tools in **isolated** ephemeral environments (like `npx` for Node).
   - The MCP server is an external tool, so `.vscode/mcp.json` uses `"command": "uvx"` with `"args": ["semantic-scholar-mcp"]`.
+- **OneDrive / cloud drive compatibility:** `UV_LINK_MODE=copy` is set in `.vscode/mcp.json` `env` because OneDrive does not support hardlinks. Without this, `uvx` will fail with `os error 396`. If the workspace is on a normal local drive, this setting is harmless.
 - **Known limitation:** The `fields` parameter in search tools (e.g., `search_papers`) may not return all requested fields (often returns only titles). Use `get_paper` with a known `paperId` for full metadata, or construct arXiv PDF URLs directly (e.g., `https://arxiv.org/pdf/XXXX.XXXXX`).
 - **Requires:** `SEMANTIC_SCHOLAR_API_KEY` (free tier available at [semanticscholar.org/product/api](https://www.semanticscholar.org/product/api)).
 
@@ -102,8 +103,12 @@ The `@bsides-researcher` Chat Participant is a custom VS Code extension (in `ext
 
 - **Chat Participant** (`@bsides-researcher`) — registered via `vscode.chat.createChatParticipant()`. Handles natural language requests in Copilot Chat.
 - **LM Tools** — registered via `vscode.lm.registerTool()`. Available to any LLM in VS Code:
-  - `bsides-researcher_downloadArxivPaper` — downloads PDFs from arXiv using Node.js `https` module.
-  - `bsides-researcher_screenshotPdf` — invokes PDF Toolkit's screenshot command via `vscode.commands.executeCommand()`.
+  - `bsides-researcher_downloadArxivPaper` (ref: `#downloadArxivPaper`) — downloads PDFs from arXiv using Node.js `https` module.
+  - `bsides-researcher_screenshotPdf` (ref: `#screenshotPdf`) — invokes PDF Toolkit's extract command via `vscode.commands.executeCommand('pdfToolkit.extractAllPages')`. Explicitly activates PDF Toolkit before calling its commands.
+  - `bsides-researcher_saveMarkdown` (ref: `#saveMarkdown`) — saves Markdown content (analysis, Mermaid diagrams) to a file in the workspace and opens it in the editor.
+- **Dynamic tool discovery** — `sendToModel()` passes ALL available LM tools (`vscode.lm.tools`) to the model, including MCP tools like Semantic Scholar. This means the model can directly call `mcp_semanticschol_search_papers` etc. instead of just suggesting the user run them.
+- **Agentic tool-calling loop** — `sendToModel()` implements a multi-turn loop (max 10 rounds) where tool call results are fed back into the conversation. This lets the model use output from one tool (e.g., downloaded filename) as input to the next tool (e.g., screenshot that file). Without this, the model hallucinates filenames.
+- **Multimodal `#file:` reference handling** — `sendToModel()` processes `request.references` (user-attached `#file:` references). Image files (PNG, JPEG, etc.) are read as binary and sent to the model via `LanguageModelDataPart.image()`. Text files are inlined as `LanguageModelTextPart`. This enables the **Analyse** step: users attach extracted PDF screenshots and the model can actually see them.
 - **Slash Commands:**
   - `/find <topic>` — search guidance for a security topic
   - `/download <arxivId> [filename]` — download a paper from arXiv
@@ -118,15 +123,23 @@ npm install
 npm run compile    # or: npm run watch
 ```
 
-Press **F5** in VS Code to launch the Extension Development Host with the extension loaded.
+Press **Ctrl+Shift+D** to open the Run and Debug panel, select **"Run @bsides-researcher Extension"**, then press **F5** to launch the Extension Development Host. The launch config passes `bsides-researcher.code-workspace` so the dev host opens the full workspace (with `papers/`, MCP servers, etc.).
+
+**Important:** The `@bsides-researcher` participant only appears in the Extension Development Host window, not in the main window. This is normal for extension development.
 
 #### Key Design Decisions
 
 - **No separate MCP server** — tools run in-process via `vscode.lm.registerTool()`, not as a stdio MCP server. This eliminates process management complexity.
 - **No `yo code` / Yeoman** — the extension was scaffolded manually (just `package.json`, `tsconfig.json`, and TypeScript source). No third-party scaffolding tools needed.
 - **PDF downloads use Node.js `https`** — with redirect handling and a `User-Agent` header (arXiv requires it). No external HTTP libraries.
-- **PDF Toolkit integration** — screenshots are triggered via `vscode.commands.executeCommand('pdf-toolkit.screenshotAllPages')`. This requires the PDF Toolkit extension to be installed.
+- **PDF Toolkit integration** — screenshots are triggered via `vscode.commands.executeCommand('pdfToolkit.extractAllPages')`. The actual command ID is `pdfToolkit.extractAllPages` (camelCase prefix, not kebab-case). The extension declares `extensionDependencies: ["TimHaintz.pdf-toolkit"]` and explicitly activates PDF Toolkit before calling its commands.
+- **GitHub Copilot Chat** — the old `GitHub.copilot` extension is deprecated. Use `GitHub.copilot-chat` (recommended in `.vscode/extensions.json`).
+- **Model selection** — `selectChatModels()` uses `{ vendor: "copilot" }` without hardcoding a model family, so it works with any available Copilot model.
+- **Workspace file** — `bsides-researcher.code-workspace` is included so the F5 launch config can open the Extension Development Host with the full workspace.
 - **Requires VS Code 1.99+** — for `vscode.lm.registerTool()` API support.
+- **Human-in-the-loop confirmation** — the `screenshotPdf` tool uses `prepareInvocation()` to return `confirmationMessages`, which displays a "Continue" / "Cancel" dialog in Copilot Chat before each PDF is rendered. This gives the user control over which papers get screenshotted, especially useful in `/workflow` runs that process multiple papers.
+- **Screenshot followup suggestions** — `extension.ts` registers a `ChatFollowupProvider` on the researcher participant. When `sendToModel()` detects that screenshot directories were produced (by inspecting `bsides-researcher_screenshotPdf` tool results), it returns them as `ChatResult.metadata.screenshotDirs`. The followup provider then generates clickable suggestions like "Analyse {paperName} screenshots" for each directory, plus an "Analyse all" option when multiple papers were screenshotted. This lets the user choose which screenshots to feed into the analysis step.
+- **Screenshot polling** — after triggering `pdfToolkit.extractAllPages`, the tool polls for output files (up to 15 seconds, checking every 2 seconds) instead of using a fixed delay. This handles large PDFs that take longer to render.
 
 ### Demo Flow
 

@@ -8,7 +8,8 @@
       "type": "extensionHost",
       "request": "launch",
       "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}/extension"
+        "--extensionDevelopmentPath=${workspaceFolder}/extension",
+        "${workspaceFolder}/bsides-researcher.code-workspace"
       ],
       "outFiles": [
         "${workspaceFolder}/extension/out/**/*.js"

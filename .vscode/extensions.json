@@ -3,8 +3,7 @@
   // VS Code will prompt users to install these when they open the workspace.
   // See: https://code.visualstudio.com/docs/configure/extensions/extension-marketplace#_workspace-recommended-extensions
   "recommendations": [
-    // GitHub Copilot (AI assistant & MCP host)
-    "GitHub.copilot",
+    // GitHub Copilot Chat (AI assistant, chat & MCP host)
     "GitHub.copilot-chat",
     // Python development
     "ms-python.python",

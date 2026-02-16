@@ -11,6 +11,9 @@
   "categories": [
     "Chat"
   ],
+  "extensionDependencies": [
+    "TimHaintz.pdf-toolkit"
+  ],
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
@@ -45,6 +48,7 @@
       {
         "name": "bsides-researcher_downloadArxivPaper",
         "displayName": "Download arXiv Paper",
+        "toolReferenceName": "downloadArxivPaper",
         "modelDescription": "Downloads a PDF from arXiv given an arXiv ID (e.g., '2502.05174') and saves it to the papers/ directory in the workspace. Returns the local file path of the downloaded PDF.",
         "canBeReferencedInPrompt": true,
         "inputSchema": {
@@ -67,6 +71,7 @@
       {
         "name": "bsides-researcher_screenshotPdf",
         "displayName": "Screenshot PDF Pages",
+        "toolReferenceName": "screenshotPdf",
         "modelDescription": "Opens a PDF file in VS Code using PDF Toolkit and extracts all pages as PNG images to the PDF-Screenshots/ directory. Returns the paths of the extracted screenshot images.",
         "canBeReferencedInPrompt": true,
         "inputSchema": {
@@ -79,6 +84,30 @@
           },
           "required": [
             "pdfPath"
+          ]
+        }
+      },
+      {
+        "name": "bsides-researcher_saveMarkdown",
+        "displayName": "Save Markdown Analysis",
+        "toolReferenceName": "saveMarkdown",
+        "modelDescription": "Saves Markdown content (analysis, Mermaid diagrams, summaries) to a file in the workspace. Typically saves to the papers/ directory (e.g., 'papers/prompt-injection-analysis.md'). Opens the saved file in the editor.",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "Workspace-relative path for the Markdown file (e.g., 'papers/prompt-injection-analysis.md')"
+            },
+            "content": {
+              "type": "string",
+              "description": "The Markdown content to write to the file, including Mermaid diagrams and analysis"
+            }
+          },
+          "required": [
+            "filePath",
+            "content"
           ]
         }
       }

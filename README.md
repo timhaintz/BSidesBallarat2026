@@ -26,13 +26,16 @@ BSidesBallarat2026/
 ├── .vscode/
 │   ├── mcp.json           # Workspace-local MCP server config
 │   ├── extensions.json    # Recommended VS Code extensions
-│   └── settings.json      # Workspace settings
-├── extension/             # (Phase 2) Custom PDF Viewer Extension
+│   ├── settings.json      # Workspace settings
+│   ├── launch.json        # F5 launch config for Extension Development Host
+│   └── tasks.json         # Build tasks (compile, watch)
+├── extension/             # @bsides-researcher Chat Participant Extension
 │   ├── src/
 │   ├── package.json
 │   └── tsconfig.json
-├── servers/               # (Phase 2) Local/custom MCP servers or wrappers
-│   └── requirements.txt
+├── papers/                # Downloaded PDFs and analysis Markdown files
+├── PDF-Screenshots/       # Page images extracted by PDF Toolkit
+├── bsides-researcher.code-workspace  # Workspace file for Extension Dev Host
 ├── .env.example           # API key template
 ├── .gitignore
 ├── .python-version        # Python version pin (managed by uv)
@@ -48,7 +51,7 @@ BSidesBallarat2026/
 ### Prerequisites
 
 - [VS Code](https://code.visualstudio.com/) (stable, latest)
-- [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) subscription
+- [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) subscription
 - Python 3.13+ and Node.js 18+
 - [`uv`](https://docs.astral.sh/uv/) for Python virtual environments and package management
 - A [Semantic Scholar API key](https://www.semanticscholar.org/product/api) (free)
@@ -74,6 +77,14 @@ BSidesBallarat2026/
    cp .env.example .env
    ```
 5. **Start the MCP servers** — Open the Chat view and the servers defined in `.vscode/mcp.json` will be available.
+
+6. **Build and launch the extension**
+   ```bash
+   cd extension
+   npm install
+   npm run compile
+   ```
+   Press **Ctrl+Shift+D** to open the Run and Debug panel, select **"Run @bsides-researcher Extension"**, then press **F5** to launch the Extension Development Host. The `@bsides-researcher` participant will be available in the Copilot Chat panel in the new window.
 
 ## Project Documents
 

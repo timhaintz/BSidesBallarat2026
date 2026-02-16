@@ -27,8 +27,16 @@ export class ScreenshotPdfTool
     options: vscode.LanguageModelToolInvocationPrepareOptions<ScreenshotPdfInput>,
     _token: vscode.CancellationToken
   ): Promise<vscode.PreparedToolInvocation> {
+    const pdfName = options.input.pdfPath.split(/[\\/]/).pop() ?? options.input.pdfPath;
     return {
       invocationMessage: `Extracting screenshots from ${options.input.pdfPath}…`,
+      confirmationMessages: {
+        title: `Screenshot PDF: ${pdfName}`,
+        message: new vscode.MarkdownString(
+          `Extract all pages from **${pdfName}** as PNG screenshots?\n\n` +
+            `This will open the PDF and save images to \`PDF-Screenshots/\`.`
+        ),
+      },
     };
   }
 
@@ -76,17 +84,33 @@ export class ScreenshotPdfTool
     }
 
     try {
+      // Ensure PDF Toolkit is activated before calling its commands
+      const pdfToolkit = vscode.extensions.getExtension(
+        "TimHaintz.pdf-toolkit"
+      );
+      if (!pdfToolkit) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            `Error: PDF Toolkit extension (TimHaintz.pdf-toolkit) is not installed.\n` +
+              `Install it from: https://marketplace.visualstudio.com/items?itemName=TimHaintz.pdf-toolkit`
+          ),
+        ]);
+      }
+      if (!pdfToolkit.isActive) {
+        await pdfToolkit.activate();
+      }
+
       // Open the PDF in VS Code — PDF Toolkit will handle it
       const pdfUri = vscode.Uri.file(absolutePath);
       await vscode.commands.executeCommand("vscode.open", pdfUri);
 
-      // Small delay to let PDF Toolkit initialise the document
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Let PDF Toolkit initialise the document (5s for reliability)
+      await new Promise((resolve) => setTimeout(resolve, 5000));
 
-      // Trigger PDF Toolkit's "Screenshot All Pages" command
+      // Trigger PDF Toolkit's "Extract All Pages" command
       // This extracts every page as a PNG to the PDF-Screenshots/ directory.
       await vscode.commands.executeCommand(
-        "pdf-toolkit.screenshotAllPages"
+        "pdfToolkit.extractAllPages"
       );
 
       // Determine expected output directory
@@ -97,16 +121,30 @@ export class ScreenshotPdfTool
         pdfBasename
       );
 
-      // Wait for screenshots to be generated
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
-      // Check if screenshots were created
+      // Poll for screenshots (up to 15 seconds) — PDF Toolkit may take
+      // several seconds for large documents or when processing sequentially.
       let screenshotFiles: string[] = [];
-      if (fs.existsSync(screenshotsDir)) {
-        screenshotFiles = fs
-          .readdirSync(screenshotsDir)
-          .filter((f) => /\.(png|jpe?g)$/i.test(f))
-          .sort();
+      const maxWaitMs = 15000;
+      const pollIntervalMs = 2000;
+      const startTime = Date.now();
+
+      while (Date.now() - startTime < maxWaitMs) {
+        await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+        if (fs.existsSync(screenshotsDir)) {
+          screenshotFiles = fs
+            .readdirSync(screenshotsDir)
+            .filter((f) => /\.(png|jpe?g)$/i.test(f))
+            .sort();
+          if (screenshotFiles.length > 0) {
+            // Wait one more beat — files may still be writing
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            screenshotFiles = fs
+              .readdirSync(screenshotsDir)
+              .filter((f) => /\.(png|jpe?g)$/i.test(f))
+              .sort();
+            break;
+          }
+        }
       }
 
       if (screenshotFiles.length > 0) {
