@@ -47,7 +47,7 @@ servers/           → Node MCP server code
     src/           → TypeScript source (index.ts) + UI HTML (ui/architecture.html)
     package.json   → Dependencies (@modelcontextprotocol/sdk, @modelcontextprotocol/ext-apps)
 presentation/      → Marp slide deck and custom theme for the BSides Ballarat 2026 talk
-  slides.md        → Marp Markdown slides (13 slides, 20-minute talk)
+  slides.md        → Marp Markdown slides (12 slides, 20-minute talk)
   theme.css        → Custom dark hacker theme (BSides aesthetic)
 papers/            → Downloaded research PDFs and analysis Markdown files
 PDF-Screenshots/   → PNG/JPEG images extracted from PDFs via PDF Toolkit
@@ -183,7 +183,7 @@ registerAppResource(server, resourceUri, resourceUri,
 
 The project includes a [Marp](https://marp.app/) slide deck for the BSides Ballarat 2026 talk ("Fun with Agentic AI", 20 minutes).
 
-- **Slides:** `presentation/slides.md` — 13 Marp Markdown slides.
+- **Slides:** `presentation/slides.md` — 12 Marp Markdown slides.
 - **Theme:** `presentation/theme.css` — custom dark hacker aesthetic with BSides branding (dark bg `#0a0e17`, accent blue `#3b82f6`, cyan `#06b6d4`, green `#10b981`).
 - **VS Code extension:** `marp-team.marp-vscode` (recommended in `.vscode/extensions.json`).
 - **Theme registration:** `.vscode/settings.json` includes `"markdown.marp.themes": ["./presentation/theme.css"]`.

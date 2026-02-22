@@ -2,7 +2,7 @@
 
 **Presenter:** Tim Haintz
 **Conference:** [BSides Ballarat 2026](https://federation.edu.au/icsl/icsl-conferences/bsides-ballarat-2026)
-**Status:** 🚧 Planning / Work-in-Progress
+**Status:** ✅ Ready to present
 
 ## What is this?
 
@@ -44,7 +44,7 @@ BSidesBallarat2026/
 │       │       └── architecture.html  # Interactive pipeline diagram
 │       └── package.json
 ├── presentation/          # Marp slide deck for the BSides talk
-│   ├── slides.md          # 13 Marp Markdown slides (20-minute talk)
+│   ├── slides.md          # 12 Marp Markdown slides (20-minute talk)
 │   └── theme.css          # Custom dark hacker theme
 ├── papers/                # Downloaded PDFs and analysis Markdown files
 ├── PDF-Screenshots/       # Page images extracted by PDF Toolkit
@@ -255,9 +255,9 @@ After rendering a PDF, its page images are saved to `PDF-Screenshots/<paper-name
 
 ## Presentation
 
-The talk is presented entirely from VS Code using [Marp for VS Code](https://marketplace.visualstudio.com/items?itemName=marp-team.marp-vscode). Open `presentation/slides.md` and use the Marp preview to run through the 13 slides.
+The talk is presented entirely from VS Code using [Marp for VS Code](https://marketplace.visualstudio.com/items?itemName=marp-team.marp-vscode). Open `presentation/slides.md` and use the Marp preview to run through the 12 slides.
 
-During the live demo, the **MCP Apps server** renders an interactive architecture diagram directly in the Copilot Chat panel — showcasing the \"BSides Ballarat Research Assistant — Pipeline\" with 5 clickable stage cards (Discover → Acquire → Render → Analyse → Visualise). Start the `bsidesSlides` MCP server from the Chat panel, then invoke the `show_architecture` tool.
+During the live demo, the **MCP Apps server** renders an interactive architecture diagram directly in the Copilot Chat panel — showcasing the "BSides Ballarat Research Assistant — Pipeline" with 5 clickable stage cards (Discover → Acquire → Render → Analyse → Visualise). Start the `bsidesSlides` MCP server from the Chat panel, then invoke the `show_architecture` tool.
 
 ## Project Documents
 

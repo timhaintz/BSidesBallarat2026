@@ -8,7 +8,7 @@
 **Target Audience:** Security researchers, penetration testers, and developers attending BSides.
 **Presenter:** Tim Haintz
 **Conference:** [BSides Ballarat 2026](https://federation.edu.au/icsl/icsl-conferences/bsides-ballarat-2026)
-**Status:** Draft — this PRD is a living document that will evolve as the project is built live.
+**Status:** ✅ Ready to present
 
 ## 2. User Flow (The Demo Script)
 
@@ -198,6 +198,7 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
   - Fixed blank cards caused by static ESM import blocking entire module in sandboxed iframe — switched to dynamic `import()` with graceful fallback.
   - Added CSP `resourceDomains` for `esm.sh` CDN access in the iframe.
   - Added `scrollIntoView` so detail panels are visible in the iframe's limited viewport.
+- [x] Format and finalize all 12 Marp slides — slide-by-slide review with screenshots, CSS fixes (section padding, table row contrast, About Me layout), replaced Mermaid code block with architecture table, added QR code to Thank You slide.
 
 ## 7. Success Criteria
 
