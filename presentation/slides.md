@@ -203,7 +203,7 @@ flowchart LR
 
 # Try It Yourself
 
-## Clone and go:
+## Clone and go
 
 ```bash
 git clone https://github.com/timhaintz/BSidesBallarat2026.git
@@ -211,6 +211,7 @@ code BSidesBallarat2026
 ```
 
 **What you need:**
+
 - VS Code (latest)
 - GitHub Copilot subscription
 - Semantic Scholar API key (free)
@@ -224,7 +225,7 @@ code BSidesBallarat2026
 <!-- _header: '' -->
 <!-- _footer: '' -->
 
-# Thank You!
+# Thank You
 
 ## Questions?
 

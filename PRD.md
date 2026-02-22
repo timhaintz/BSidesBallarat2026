@@ -87,6 +87,7 @@ BSidesBallarat2026/
 ├── .python-version        # Python version pin (managed by uv)
 ├── pyproject.toml         # Python project config & dependencies
 ├── uv.lock                # Lockfile for reproducible installs
+├── .github/agents/        # Custom Agent definition (bsides-researcher.md)
 ├── AGENTS.md              # AI coding agent instructions
 ├── PRD.md                 # This document
 └── README.md              # Setup instructions for workshop attendees
@@ -148,7 +149,14 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
 - [x] Register `@bsides-researcher` Chat Participant with intent detection and workflow chaining.
 - [x] Agentic tool-calling loop — tool results fed back to LLM for multi-step workflows.
 - [x] Workspace file (`bsides-researcher.code-workspace`) for Extension Development Host.
-- [ ] Test end-to-end: `@bsides-researcher find and analyse prompt injection papers`.
+- [x] Human-in-the-loop — `confirmationMessages` dialog before each PDF screenshot, `ChatFollowupProvider` for post-screenshot analysis suggestions.
+- [x] `saveMarkdown` LM tool — saves analysis and Mermaid diagrams to workspace files.
+- [x] Dynamic tool discovery — all available LM tools (including MCP) passed to the model.
+- [x] BSides Researcher Custom Agent (`.github/agents/bsides-researcher.md`) — same pipeline, runs in main VS Code window without Extension Development Host.
+- [x] Test end-to-end: `@bsides-researcher find and analyse prompt injection papers`.
+  - Demonstrated: Full pipeline via `/workflow prompt injection` — Semantic Scholar search returned 20 papers, 4 downloaded to `papers/`, screenshots extracted to `PDF-Screenshots/`, Mermaid diagrams generated, analysis saved to `papers/prompt-injection-research-analysis.md` (16.2 KB).
+  - Human-in-the-loop confirmation dialogs shown before each PDF screenshot.
+  - Followup suggestions offered post-screenshot for selective analysis.
 
 ## 7. Success Criteria
 
