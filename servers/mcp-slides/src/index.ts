@@ -34,7 +34,7 @@ registerAppTool(
   {
     title: "Show Architecture Diagram",
     description:
-      "Displays an interactive architecture diagram of the BSides Security Research Assistant pipeline. " +
+      "Displays an interactive architecture diagram of the BSides Ballarat Research Assistant pipeline. " +
       "Shows the five-stage workflow: Discover → Acquire → Render → Analyse → Visualise, " +
       "with the tools and technologies used at each stage. " +
       "Call this tool when the user asks to see the architecture, pipeline, or workflow diagram.",
@@ -46,7 +46,10 @@ registerAppTool(
           "Optional: highlight a specific pipeline stage (discover, acquire, render, analyse, visualise)",
         ),
     },
-    _meta: { ui: { resourceUri: architectureResourceUri } },
+    _meta: { ui: {
+      resourceUri: architectureResourceUri,
+      csp: { resourceDomains: ["https://esm.sh"] },
+    } },
   },
   async (args: { highlightStage?: string }) => {
     const stage = args.highlightStage ?? "all";
@@ -55,7 +58,7 @@ registerAppTool(
         {
           type: "text" as const,
           text: JSON.stringify({
-            pipeline: "Security Research Assistant",
+            pipeline: "BSides Ballarat Research Assistant",
             stages: [
               { id: "discover", label: "Discover", tool: "Semantic Scholar MCP", icon: "🔍" },
               { id: "acquire", label: "Acquire", tool: "arXiv PDF Download", icon: "📥" },

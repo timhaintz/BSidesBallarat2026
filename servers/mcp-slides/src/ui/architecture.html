@@ -351,7 +351,7 @@
 <body>
 
     <div class="header">
-        <h1>Security Research Assistant — Pipeline</h1>
+        <h1>BSides Ballarat Research Assistant — Pipeline</h1>
         <p>Click a stage to explore • Powered by MCP inside VS Code</p>
     </div>
 
@@ -370,8 +370,6 @@
     </div>
 
     <script type="module">
-        import { App } from "https://esm.sh/@modelcontextprotocol/ext-apps@1.1.0";
-
         // ── Pipeline data ──────────────────────────────────────────────────────
         const STAGES = [
             {
@@ -524,8 +522,9 @@
             detailPanel.classList.add("visible");
         }
 
-        // ── MCP App integration ────────────────────────────────────────────────
+        // ── MCP App integration (dynamic import so DOM renders even if CDN is blocked) ──
         try {
+            const { App } = await import("https://esm.sh/@modelcontextprotocol/ext-apps@1.1.0");
             const app = new App({ name: "BSides Architecture Diagram", version: "1.0.0" });
             app.connect();
 
@@ -550,7 +549,7 @@
                 }
             };
         } catch {
-            // Running outside an MCP host — still works as standalone HTML
+            // Running outside an MCP host or CDN blocked — still works as standalone HTML
             console.log("MCP App SDK not available — running in standalone mode");
         }
     </script>
