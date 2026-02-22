@@ -15,6 +15,7 @@ import {
   registerAppResource,
   RESOURCE_MIME_TYPE,
 } from "@modelcontextprotocol/ext-apps/server";
+import { z } from "zod";
 import fs from "node:fs/promises";
 import path from "node:path";
 
@@ -38,15 +39,12 @@ registerAppTool(
       "with the tools and technologies used at each stage. " +
       "Call this tool when the user asks to see the architecture, pipeline, or workflow diagram.",
     inputSchema: {
-      type: "object" as const,
-      properties: {
-        highlightStage: {
-          type: "string",
-          description:
-            "Optional: highlight a specific pipeline stage (discover, acquire, render, analyse, visualise)",
-          enum: ["discover", "acquire", "render", "analyse", "visualise"],
-        },
-      },
+      highlightStage: z
+        .enum(["discover", "acquire", "render", "analyse", "visualise"])
+        .optional()
+        .describe(
+          "Optional: highlight a specific pipeline stage (discover, acquire, render, analyse, visualise)",
+        ),
     },
     _meta: { ui: { resourceUri: architectureResourceUri } },
   },
