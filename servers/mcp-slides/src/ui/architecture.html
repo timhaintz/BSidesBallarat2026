@@ -520,6 +520,11 @@
                 )
                 .join("");
             detailPanel.classList.add("visible");
+
+            // Scroll detail panel into view (MCP Apps iframe has limited height)
+            requestAnimationFrame(() => {
+                detailPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            });
         }
 
         // ── MCP App integration (dynamic import so DOM renders even if CDN is blocked) ──
