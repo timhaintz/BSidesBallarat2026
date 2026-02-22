@@ -62,10 +62,11 @@ This toolchain supports a specific "Hero Flow" to be performed live on stage:
 - **Component:** MCP Apps server (`servers/mcp-slides/`)
 - **Type:** MCP Server (TypeScript, stdio transport) using [`@modelcontextprotocol/ext-apps`](https://www.npmjs.com/package/@modelcontextprotocol/ext-apps) SDK
 - **Function:**
-  - Provides a `show_architecture` tool that renders an interactive 5-stage pipeline diagram (Discover → Acquire → Render → Analyse → Visualise) directly in the Copilot Chat panel.
+  - Provides a `show_architecture` tool that renders the interactive "BSides Ballarat Research Assistant — Pipeline" diagram (Discover → Acquire → Render → Analyse → Visualise) directly in the Copilot Chat panel.
   - Uses the MCP Apps extension: tool returns data + declares a `ui://` resource containing self-contained HTML. VS Code fetches the resource and renders it in a sandboxed iframe inline in chat.
   - Clickable stage cards with detail panels, tech stack tags, and animated transitions.
   - Optional `highlightStage` parameter to spotlight a specific pipeline stage during the demo.
+  - CSP configuration allows `esm.sh` CDN for the MCP App SDK; dynamic `import()` ensures DOM renders even if CDN is blocked.
 - **Configuration:** Defined as `bsidesSlides` in `.vscode/mcp.json` (stdio, `npx tsx`).
 
 ### 3.6. The "Glue" (Control Plane)
@@ -191,7 +192,12 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
 - [x] Self-contained interactive HTML diagram with dark hacker aesthetic, clickable pipeline stages, and MCP App SDK integration.
 - [x] Register `bsidesSlides` MCP server in `.vscode/mcp.json`.
 - [x] Verify server starts and responds to initialize request.
-- [ ] End-to-end test: invoke `show_architecture` in Copilot Chat and verify interactive diagram renders inline.
+- [x] End-to-end test: invoke `show_architecture` in Copilot Chat and verify interactive diagram renders inline.
+  - Demonstrated: `show_architecture` renders the "BSides Ballarat Research Assistant — Pipeline" diagram inline in Copilot Chat with 5 clickable stage cards, detail panels, tech stack tags, and animated transitions.
+  - Fixed Zod v4 schema compatibility issue (MCP SDK v1.26.0 requires Zod schemas, not plain JSON objects).
+  - Fixed blank cards caused by static ESM import blocking entire module in sandboxed iframe — switched to dynamic `import()` with graceful fallback.
+  - Added CSP `resourceDomains` for `esm.sh` CDN access in the iframe.
+  - Added `scrollIntoView` so detail panels are visible in the iframe's limited viewport.
 
 ## 7. Success Criteria
 

@@ -122,25 +122,31 @@ The MCP Apps server provides **interactive HTML diagrams** that render inline in
 
 - **Transport:** stdio (launched by VS Code from `.vscode/mcp.json`).
 - **Server:** Uses `McpServer` from `@modelcontextprotocol/sdk` + `registerAppTool` / `registerAppResource` from `@modelcontextprotocol/ext-apps/server`.
-- **Tool:** `show_architecture` — displays the 5-stage research pipeline (Discover → Acquire → Render → Analyse → Visualise) as an interactive, clickable diagram.
+- **Tool:** `show_architecture` — displays the "BSides Ballarat Research Assistant — Pipeline" (Discover → Acquire → Render → Analyse → Visualise) as an interactive, clickable diagram.
   - Optional `highlightStage` parameter to spotlight a specific stage.
   - `_meta.ui.resourceUri` links to `ui://bsides-slides/architecture.html`.
 - **UI Resource:** Self-contained HTML (`src/ui/architecture.html`) with:
   - Dark hacker aesthetic matching the Marp presentation theme.
   - Clickable stage cards with detail panels, tech stack tags, and animated transitions.
-  - MCP App SDK integration via `import { App } from "@modelcontextprotocol/ext-apps"` — receives tool result data and highlights the requested stage.
+  - MCP App SDK integration via dynamic `import()` from `https://esm.sh/@modelcontextprotocol/ext-apps@1.1.0` — receives tool result data and highlights the requested stage.
+  - Dynamic import ensures DOM renders even if the CDN fetch fails (CSP blocked, offline, etc.).
+  - `scrollIntoView` on detail panels so they’re visible in the iframe’s limited viewport.
   - Graceful fallback: works as standalone HTML outside an MCP host.
 - **Runs via `npx tsx`** — no build step needed. `tsx` transpiles TypeScript on-the-fly.
 
 #### MCP Apps Core Pattern: Tool + UI Resource
 
 ```typescript
-// 1. Register a tool with UI metadata
+// 1. Register a tool with UI metadata (inputSchema must use Zod, not plain JSON)
+import { z } from "zod";
 registerAppTool(server, "tool-name", {
   title: "Tool Title",
   description: "What the tool does",
-  inputSchema: { type: "object", properties: { /* ... */ } },
-  _meta: { ui: { resourceUri: "ui://server-name/page.html" } },
+  inputSchema: { myParam: z.string().optional().describe("Description") },
+  _meta: { ui: {
+    resourceUri: "ui://server-name/page.html",
+    csp: { resourceDomains: ["https://esm.sh"] },  // allow CDN in iframe
+  } },
 }, async (args) => {
   return { content: [{ type: "text", text: JSON.stringify(data) }] };
 });
@@ -167,7 +173,9 @@ registerAppResource(server, resourceUri, resourceUri,
 #### Key Design Decisions
 
 - **Self-contained HTML** — the architecture diagram is a single HTML file with inline CSS and JS. No build step, no bundler, no framework. This keeps the demo simple and avoids Vite/webpack complexity.
-- **ESM import from CDN** — the HTML imports the App SDK via `https://esm.sh/@modelcontextprotocol/ext-apps@1.1.0` so it works in the sandboxed iframe without a bundler.
+- **Dynamic `import()` from CDN** — the HTML uses `await import("https://esm.sh/@modelcontextprotocol/ext-apps@1.1.0")` (dynamic, not static) inside a try/catch. This ensures all DOM-building code runs even if the CDN fetch is blocked by the iframe’s CSP. A static `import` at the top of a `<script type="module">` would abort the entire module on failure.
+- **CSP `resourceDomains`** — the tool registration includes `csp: { resourceDomains: ["https://esm.sh"] }` so the sandboxed iframe allows fetching the SDK from the CDN.
+- **Zod schemas required** — MCP SDK v1.26.0 with Zod 4 requires actual Zod schemas for `inputSchema`, not plain JSON schema objects. The SDK’s `zod-compat.js` checks for `_zod` markers; plain objects fall through to a v3 code path that calls `.safeParseAsync()` on the raw object (which fails). Always use `z.string()`, `z.enum([...])`, etc.
 - **No Vite** — the quickstart guide recommends Vite + `vite-plugin-singlefile` for production apps, but our self-contained HTML approach is simpler for a single interactive diagram.
 - **`npx tsx` instead of compiled JS** — avoids a build step. For production, you'd compile with `tsc` and run with `node dist/index.js`.
 

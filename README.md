@@ -257,7 +257,7 @@ After rendering a PDF, its page images are saved to `PDF-Screenshots/<paper-name
 
 The talk is presented entirely from VS Code using [Marp for VS Code](https://marketplace.visualstudio.com/items?itemName=marp-team.marp-vscode). Open `presentation/slides.md` and use the Marp preview to run through the 13 slides.
 
-During the live demo, the **MCP Apps server** renders an interactive architecture diagram directly in the Copilot Chat panel — showcasing the 5-stage research pipeline (Discover → Acquire → Render → Analyse → Visualise) as clickable cards. Start the `bsidesSlides` MCP server from the Chat panel, then invoke the `show_architecture` tool.
+During the live demo, the **MCP Apps server** renders an interactive architecture diagram directly in the Copilot Chat panel — showcasing the \"BSides Ballarat Research Assistant — Pipeline\" with 5 clickable stage cards (Discover → Acquire → Render → Analyse → Visualise). Start the `bsidesSlides` MCP server from the Chat panel, then invoke the `show_architecture` tool.
 
 ## Project Documents
 
