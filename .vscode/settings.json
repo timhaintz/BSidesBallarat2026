@@ -36,6 +36,11 @@
     "editor.tabSize": 2
   },
 
+  // Marp slide deck — custom BSides theme
+  "markdown.marp.themes": [
+    "./presentation/theme.css"
+  ],
+
   // Files to exclude from explorer
   "files.exclude": {
     "**/__pycache__": true,

@@ -12,6 +12,8 @@
     "TimHaintz.pdf-toolkit",
     // Mermaid diagram preview
     "bierner.markdown-mermaid",
+    // Marp slide deck presentation
+    "marp-team.marp-vscode",
     // Markdown linting
     "DavidAnson.vscode-markdownlint",
     // EditorConfig for consistent formatting
