@@ -25,7 +25,7 @@ section {
     background: var(--bsides-bg-dark);
     color: var(--bsides-text-primary);
     font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-    padding: 40px 60px;
+    padding: 80px 60px 40px 60px;
 }
 
 /* Title slide styling */
@@ -171,8 +171,14 @@ td {
     color: var(--bsides-text-primary);
 }
 
+tr:nth-child(odd) td {
+    background: rgba(15, 23, 42, 0.8);
+    color: var(--bsides-text-primary);
+}
+
 tr:nth-child(even) td {
-    background: rgba(30, 41, 59, 0.5);
+    background: rgba(30, 41, 59, 0.6);
+    color: var(--bsides-text-primary);
 }
 
 /* Blockquotes — used for callouts */
@@ -227,23 +233,14 @@ section.columns h1 {
     grid-column: 1 / -1;
 }
 
-/* About me slide */
-section.about {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    grid-template-rows: auto 1fr;
-    gap: 0 40px;
-    align-items: start;
+/* About me slide — photo uses Marp bg right, text flows normally */
+section.about ul {
+    font-size: 0.85em;
+    margin-top: 0.3em;
 }
 
-section.about h1 {
-    grid-column: 1 / -1;
-}
-
-section.about img {
-    border-radius: 12px;
-    width: 200px;
-    border: 2px solid var(--bsides-accent-blue);
+section.about li {
+    margin-bottom: 0.15em;
 }
 
 /* Pipeline / flow highlight */
