@@ -67,6 +67,7 @@ BSidesBallarat2026/
 - [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) subscription
 - Python 3.13+ and Node.js 18+
 - [`uv`](https://docs.astral.sh/uv/) for Python virtual environments and package management
+- [PDF Toolkit](https://marketplace.visualstudio.com/items?itemName=TimHaintz.pdf-toolkit) VS Code extension for PDF viewing and image extraction
 - A [Semantic Scholar API key](https://www.semanticscholar.org/product/api) (free)
 
 ### Setup
