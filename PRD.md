@@ -50,7 +50,25 @@ This toolchain supports a specific "Hero Flow" to be performed live on stage:
 - **Type:** VS Code Extension (already in `.vscode/extensions.json`)
 - **Function:** Renders Mermaid code blocks in Markdown preview. The Agent generates a `.md` file containing a Mermaid code block, which is previewed natively in VS Code.
 
-### 3.4. The "Glue" (Control Plane)
+### 3.4. The "Stage" (Presentation)
+
+- **Component:** [Marp for VS Code](https://marketplace.visualstudio.com/items?itemName=marp-team.marp-vscode) (`marp-team.marp-vscode`)
+- **Type:** VS Code Extension (from Marketplace, included in `.vscode/extensions.json`)
+- **Function:** Renders `presentation/slides.md` as a slide deck directly in VS Code. Custom theme (`presentation/theme.css`) provides a dark hacker aesthetic with BSides branding.
+- **Key Commands:** `Marp: Open Preview to the Side`, `Marp: Export Slide Deck...`
+
+### 3.5. The "Wow" (Interactive Diagrams)
+
+- **Component:** MCP Apps server (`servers/mcp-slides/`)
+- **Type:** MCP Server (TypeScript, stdio transport) using [`@modelcontextprotocol/ext-apps`](https://www.npmjs.com/package/@modelcontextprotocol/ext-apps) SDK
+- **Function:**
+  - Provides a `show_architecture` tool that renders an interactive 5-stage pipeline diagram (Discover → Acquire → Render → Analyse → Visualise) directly in the Copilot Chat panel.
+  - Uses the MCP Apps extension: tool returns data + declares a `ui://` resource containing self-contained HTML. VS Code fetches the resource and renders it in a sandboxed iframe inline in chat.
+  - Clickable stage cards with detail panels, tech stack tags, and animated transitions.
+  - Optional `highlightStage` parameter to spotlight a specific pipeline stage during the demo.
+- **Configuration:** Defined as `bsidesSlides` in `.vscode/mcp.json` (stdio, `npx tsx`).
+
+### 3.6. The "Glue" (Control Plane)
 
 - **Component:** `@bsides-researcher` Chat Participant — a custom VS Code extension
 - **Type:** VS Code Extension (TypeScript, uses `vscode.chat.createChatParticipant()` API)
@@ -80,6 +98,13 @@ BSidesBallarat2026/
 │   ├── src/
 │   ├── package.json
 │   └── tsconfig.json
+├── servers/
+│   └── mcp-slides/        # MCP Apps server — interactive HTML diagrams in chat
+│       ├── src/
+│       └── package.json
+├── presentation/          # Marp slide deck and custom theme
+│   ├── slides.md
+│   └── theme.css
 ├── papers/                # Downloaded PDFs and analysis Markdown files
 ├── PDF-Screenshots/       # Page images extracted by PDF Toolkit
 ├── bsides-researcher.code-workspace  # Workspace file for Extension Dev Host
@@ -157,6 +182,16 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
   - Demonstrated: Full pipeline via `/workflow prompt injection` — Semantic Scholar search returned 20 papers, 4 downloaded to `papers/`, screenshots extracted to `PDF-Screenshots/`, Mermaid diagrams generated, analysis saved to `papers/prompt-injection-research-analysis.md` (16.2 KB).
   - Human-in-the-loop confirmation dialogs shown before each PDF screenshot.
   - Followup suggestions offered post-screenshot for selective analysis.
+
+### Phase 4: Presentation & Interactive Diagrams
+
+- [x] Create Marp slide deck (`presentation/slides.md`) with custom dark hacker theme (`presentation/theme.css`).
+- [x] Register Marp theme in `.vscode/settings.json` and extension in `.vscode/extensions.json`.
+- [x] Scaffold MCP Apps server (`servers/mcp-slides/`) with `show_architecture` tool.
+- [x] Self-contained interactive HTML diagram with dark hacker aesthetic, clickable pipeline stages, and MCP App SDK integration.
+- [x] Register `bsidesSlides` MCP server in `.vscode/mcp.json`.
+- [x] Verify server starts and responds to initialize request.
+- [ ] End-to-end test: invoke `show_architecture` in Copilot Chat and verify interactive diagram renders inline.
 
 ## 7. Success Criteria
 

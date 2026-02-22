@@ -42,7 +42,13 @@ extension/         → @bsides-researcher Chat Participant extension (TypeScript
   src/             → TypeScript source (extension.ts, participant.ts, tools/)
   out/             → Compiled JavaScript (gitignored)
   package.json     → Extension manifest (chatParticipants, languageModelTools)
-servers/           → Python/Node MCP server code and wrappers (if needed)
+servers/           → Node MCP server code
+  mcp-slides/      → MCP Apps server — interactive HTML diagrams inline in Copilot Chat
+    src/           → TypeScript source (index.ts) + UI HTML (ui/architecture.html)
+    package.json   → Dependencies (@modelcontextprotocol/sdk, @modelcontextprotocol/ext-apps)
+presentation/      → Marp slide deck and custom theme for the BSides Ballarat 2026 talk
+  slides.md        → Marp Markdown slides (13 slides, 20-minute talk)
+  theme.css        → Custom dark hacker theme (BSides aesthetic)
 papers/            → Downloaded research PDFs and analysis Markdown files
 PDF-Screenshots/   → PNG/JPEG images extracted from PDFs via PDF Toolkit
 ```
@@ -95,6 +101,86 @@ When modifying workspace config, always use workspace-relative paths (`${workspa
 - Key commands: `PDF Toolkit: Screenshot All Pages`, `PDF Toolkit: Screenshot Current Page`, `PDF Toolkit: Screenshot Custom...`
 - Extracted images can be added directly to GitHub Copilot Chat via `#file:` references.
 - Source code: [github.com/timhaintz/pdf-toolkit](https://github.com/timhaintz/pdf-toolkit)
+
+### MCP Apps Server (`servers/mcp-slides/`)
+
+The MCP Apps server provides **interactive HTML diagrams** that render inline in the Copilot Chat panel. This is used during the live demo as a "wow moment" — the architecture pipeline diagram appears directly in chat, not in a separate window.
+
+#### What are MCP Apps?
+
+- **MCP Apps** extend the [Model Context Protocol](https://modelcontextprotocol.io/) by letting tools declare UI resources.
+- A tool returns structured data via the normal MCP `content` array **plus** declares a `ui://` resource containing its HTML interface.
+- The host (VS Code Copilot Chat, Claude Desktop, etc.) fetches the resource and renders it in a **sandboxed iframe** inline in the conversation.
+- Bidirectional communication: the host passes tool data to the UI via notifications, and the UI can call other tools through the host.
+- **Specification:** [MCP Apps spec (2026-01-26)](https://github.com/modelcontextprotocol/ext-apps/blob/main/specification/2026-01-26/apps.mdx) — an extension to the core MCP spec.
+- **SDK:** [`@modelcontextprotocol/ext-apps`](https://www.npmjs.com/package/@modelcontextprotocol/ext-apps) (v1.1.0) — Apache 2.0 license.
+- **API docs:** [modelcontextprotocol.github.io/ext-apps/api/](https://modelcontextprotocol.github.io/ext-apps/api/)
+- **Quickstart:** [Quickstart Guide](https://modelcontextprotocol.github.io/ext-apps/api/documents/Quickstart.html)
+- **Supported clients:** Claude, Claude Desktop, VS Code Insiders, Goose, Postman, MCPJam.
+
+#### Architecture
+
+- **Transport:** stdio (launched by VS Code from `.vscode/mcp.json`).
+- **Server:** Uses `McpServer` from `@modelcontextprotocol/sdk` + `registerAppTool` / `registerAppResource` from `@modelcontextprotocol/ext-apps/server`.
+- **Tool:** `show_architecture` — displays the 5-stage research pipeline (Discover → Acquire → Render → Analyse → Visualise) as an interactive, clickable diagram.
+  - Optional `highlightStage` parameter to spotlight a specific stage.
+  - `_meta.ui.resourceUri` links to `ui://bsides-slides/architecture.html`.
+- **UI Resource:** Self-contained HTML (`src/ui/architecture.html`) with:
+  - Dark hacker aesthetic matching the Marp presentation theme.
+  - Clickable stage cards with detail panels, tech stack tags, and animated transitions.
+  - MCP App SDK integration via `import { App } from "@modelcontextprotocol/ext-apps"` — receives tool result data and highlights the requested stage.
+  - Graceful fallback: works as standalone HTML outside an MCP host.
+- **Runs via `npx tsx`** — no build step needed. `tsx` transpiles TypeScript on-the-fly.
+
+#### MCP Apps Core Pattern: Tool + UI Resource
+
+```typescript
+// 1. Register a tool with UI metadata
+registerAppTool(server, "tool-name", {
+  title: "Tool Title",
+  description: "What the tool does",
+  inputSchema: { type: "object", properties: { /* ... */ } },
+  _meta: { ui: { resourceUri: "ui://server-name/page.html" } },
+}, async (args) => {
+  return { content: [{ type: "text", text: JSON.stringify(data) }] };
+});
+
+// 2. Register the UI resource that the host will fetch and render
+registerAppResource(server, resourceUri, resourceUri,
+  { mimeType: RESOURCE_MIME_TYPE },
+  async () => {
+    const html = await fs.readFile(path.join(import.meta.dirname, "ui", "page.html"), "utf-8");
+    return { contents: [{ uri: resourceUri, mimeType: RESOURCE_MIME_TYPE, text: html }] };
+  },
+);
+```
+
+#### SDK Modules
+
+| Module | Purpose |
+|---|---|
+| `@modelcontextprotocol/ext-apps` | Build interactive Views (`App` class, `PostMessageTransport`) — used in the HTML UI |
+| `@modelcontextprotocol/ext-apps/server` | Register tools + resources on an MCP server (`registerAppTool`, `registerAppResource`, `RESOURCE_MIME_TYPE`) |
+| `@modelcontextprotocol/ext-apps/react` | React hooks for Views (`useApp`, `useHostStyles`, etc.) — not used in this project |
+| `@modelcontextprotocol/ext-apps/app-bridge` | Embed and communicate with Views in a chat client host — not used in this project |
+
+#### Key Design Decisions
+
+- **Self-contained HTML** — the architecture diagram is a single HTML file with inline CSS and JS. No build step, no bundler, no framework. This keeps the demo simple and avoids Vite/webpack complexity.
+- **ESM import from CDN** — the HTML imports the App SDK via `https://esm.sh/@modelcontextprotocol/ext-apps@1.1.0` so it works in the sandboxed iframe without a bundler.
+- **No Vite** — the quickstart guide recommends Vite + `vite-plugin-singlefile` for production apps, but our self-contained HTML approach is simpler for a single interactive diagram.
+- **`npx tsx` instead of compiled JS** — avoids a build step. For production, you'd compile with `tsc` and run with `node dist/index.js`.
+
+### Presentation (Marp)
+
+The project includes a [Marp](https://marp.app/) slide deck for the BSides Ballarat 2026 talk ("Fun with Agentic AI", 20 minutes).
+
+- **Slides:** `presentation/slides.md` — 13 Marp Markdown slides.
+- **Theme:** `presentation/theme.css` — custom dark hacker aesthetic with BSides branding (dark bg `#0a0e17`, accent blue `#3b82f6`, cyan `#06b6d4`, green `#10b981`).
+- **VS Code extension:** `marp-team.marp-vscode` (recommended in `.vscode/extensions.json`).
+- **Theme registration:** `.vscode/settings.json` includes `"markdown.marp.themes": ["./presentation/theme.css"]`.
+- **Custom CSS classes:** `.title`, `.section`, `.demo`, `.about`, `.pipeline`, `.columns` — applied via Marp's `<!-- _class: classname -->` directive.
+- **Export:** Use the Marp extension's export command or `npx @marp-team/marp-cli presentation/slides.md --theme presentation/theme.css --html --allow-local-files`.
 
 ### @bsides-researcher Chat Participant Extension
 
@@ -241,9 +327,13 @@ The Semantic Scholar MCP server does **not** download raw PDFs. Its `get_paper_f
 | `uv` | Python virtual environments, package management, and project commands (preferred) |
 | `uvx` | Running external Python tools in isolated environments (like `npx` for Python) |
 | `npx` | Running Node.js tools |
+| `tsx` | TypeScript execution without compilation (used by MCP Apps server) |
 | `ruff` | Python linting & formatting |
 | `eslint` | TypeScript linting |
 | `Semantic Scholar API` | Academic paper search |
 | `semantic-scholar-mcp` | MCP server for Semantic Scholar (run via `uvx`, not `uv run`) |
+| `@modelcontextprotocol/ext-apps` | MCP Apps SDK — interactive UI in chat (used by `servers/mcp-slides/`) |
+| `@modelcontextprotocol/sdk` | MCP TypeScript SDK — server + transport (used by `servers/mcp-slides/`) |
 | `PDF Toolkit` | VS Code extension for PDF viewing and image extraction |
+| `Marp for VS Code` | Slide deck presentation from Markdown (`marp-team.marp-vscode`) |
 | `@bsides-researcher` extension | Chat Participant + LM tools for download & screenshot automation (in `extension/`) |

@@ -1,0 +1,21 @@
+{
+  "name": "bsides-mcp-slides",
+  "version": "1.0.0",
+  "description": "MCP Apps server for BSides Ballarat 2026 — interactive architecture diagrams in Copilot Chat",
+  "type": "module",
+  "scripts": {
+    "serve": "npx tsx src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.1.0",
+    "@modelcontextprotocol/sdk": "^1.26.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "tsx": "^4.19.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

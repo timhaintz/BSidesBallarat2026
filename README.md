@@ -36,6 +36,16 @@ BSidesBallarat2026/
 │   ├── src/
 │   ├── package.json
 │   └── tsconfig.json
+├── servers/
+│   └── mcp-slides/        # MCP Apps server — interactive HTML diagrams in chat
+│       ├── src/
+│       │   ├── index.ts    # MCP server (stdio, show_architecture tool)
+│       │   └── ui/
+│       │       └── architecture.html  # Interactive pipeline diagram
+│       └── package.json
+├── presentation/          # Marp slide deck for the BSides talk
+│   ├── slides.md          # 13 Marp Markdown slides (20-minute talk)
+│   └── theme.css          # Custom dark hacker theme
 ├── papers/                # Downloaded PDFs and analysis Markdown files
 ├── PDF-Screenshots/       # Page images extracted by PDF Toolkit
 ├── bsides-researcher.code-workspace  # Workspace file for Extension Dev Host
@@ -242,6 +252,12 @@ After rendering a PDF, its page images are saved to `PDF-Screenshots/<paper-name
 | Mermaid diagrams | Embedded in the analysis Markdown files |
 
 ---
+
+## Presentation
+
+The talk is presented entirely from VS Code using [Marp for VS Code](https://marketplace.visualstudio.com/items?itemName=marp-team.marp-vscode). Open `presentation/slides.md` and use the Marp preview to run through the 13 slides.
+
+During the live demo, the **MCP Apps server** renders an interactive architecture diagram directly in the Copilot Chat panel — showcasing the 5-stage research pipeline (Discover → Acquire → Render → Analyse → Visualise) as clickable cards. Start the `bsidesSlides` MCP server from the Chat panel, then invoke the `show_architecture` tool.
 
 ## Project Documents
 

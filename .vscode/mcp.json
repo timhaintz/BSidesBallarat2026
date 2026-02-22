@@ -16,11 +16,24 @@
         "SEMANTIC_SCHOLAR_API_KEY": "${input:semanticScholarApiKey}",
         "UV_LINK_MODE": "copy"
       }
-    }
+    },
     // Phase 3: LM tools (download + screenshot) are provided by
     // the @bsides-researcher Chat Participant extension in extension/.
     // No separate MCP server needed — tools run in-process via
     // vscode.lm.registerTool().
+    // MCP Apps: Interactive diagrams rendered inline in Copilot Chat
+    "bsidesSlides": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "tsx",
+        "${workspaceFolder}/servers/mcp-slides/src/index.ts"
+      ],
+      "cwd": "${workspaceFolder}/servers/mcp-slides",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
   },
   "inputs": [
     {

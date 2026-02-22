@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>BSides Security Research Pipeline</title>
+    <style>
+        /* ── Dark hacker aesthetic matching the Marp theme ── */
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-card: #111827;
+            --bg-card-hover: #1e293b;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-purple: #a855f7;
+            --accent-amber: #f59e0b;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --border: #1e293b;
+            --glow-blue: rgba(59, 130, 246, 0.3);
+            --glow-cyan: rgba(6, 182, 212, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Cascadia Code', system-ui, -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px;
+            overflow-x: hidden;
+        }
+
+        /* ── Header ── */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* ── Pipeline Container ── */
+        .pipeline {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            gap: 0;
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* ── Stage Card ── */
+        .stage {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            min-width: 0;
+        }
+
+        .stage:hover,
+        .stage.active {
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+        }
+
+        .stage.active {
+            border-color: var(--stage-color, var(--accent-blue));
+            box-shadow: 0 0 20px var(--stage-glow, var(--glow-blue));
+        }
+
+        .stage-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            filter: grayscale(0.2);
+            transition: filter 0.3s;
+        }
+
+        .stage.active .stage-icon {
+            filter: grayscale(0);
+        }
+
+        .stage-number {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .stage-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .stage-tool {
+            font-size: 0.7rem;
+            color: var(--stage-color, var(--accent-blue));
+            text-align: center;
+            font-weight: 500;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .stage.active .stage-tool {
+            opacity: 1;
+        }
+
+        /* ── Arrow connectors ── */
+        .arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            flex-shrink: 0;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            opacity: 0.5;
+            transition: opacity 0.3s, color 0.3s;
+        }
+
+        .arrow.active {
+            opacity: 1;
+            color: var(--accent-cyan);
+        }
+
+        .arrow svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* ── Detail panel ── */
+        .detail-panel {
+            max-width: 1100px;
+            margin: 28px auto 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            min-height: 120px;
+        }
+
+        .detail-panel.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .detail-panel h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-panel .description {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+
+        .detail-panel .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tech-tag {
+            font-size: 0.72rem;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-weight: 600;
+            border: 1px solid;
+        }
+
+        /* ── Stage-specific colours ── */
+        .stage[data-stage="discover"] {
+            --stage-color: var(--accent-blue);
+            --stage-glow: rgba(59, 130, 246, 0.25);
+        }
+
+        .stage[data-stage="acquire"] {
+            --stage-color: var(--accent-cyan);
+            --stage-glow: rgba(6, 182, 212, 0.25);
+        }
+
+        .stage[data-stage="render"] {
+            --stage-color: var(--accent-green);
+            --stage-glow: rgba(16, 185, 129, 0.25);
+        }
+
+        .stage[data-stage="analyse"] {
+            --stage-color: var(--accent-purple);
+            --stage-glow: rgba(168, 85, 247, 0.25);
+        }
+
+        .stage[data-stage="visualise"] {
+            --stage-color: var(--accent-amber);
+            --stage-glow: rgba(245, 158, 11, 0.25);
+        }
+
+        /* ── Pulse animation for active stage ── */
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 var(--stage-glow);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px transparent;
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 transparent;
+            }
+        }
+
+        .stage.highlighted {
+            animation: pulse-ring 1.5s ease infinite;
+            border-color: var(--stage-color);
+            background: var(--bg-card-hover);
+        }
+
+        /* ── Animated entry ── */
+        @keyframes slide-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stage {
+            animation: slide-up 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .stage:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .stage:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .stage:nth-child(5) {
+            animation-delay: 0.3s;
+        }
+
+        .stage:nth-child(7) {
+            animation-delay: 0.4s;
+        }
+
+        .stage:nth-child(9) {
+            animation-delay: 0.5s;
+        }
+
+        .arrow:nth-child(2) {
+            animation: slide-up 0.5s ease 0.15s forwards;
+            opacity: 0;
+        }
+
+        .arrow:nth-child(4) {
+            animation: slide-up 0.5s ease 0.25s forwards;
+            opacity: 0;
+        }
+
+        .arrow:nth-child(6) {
+            animation: slide-up 0.5s ease 0.35s forwards;
+            opacity: 0;
+        }
+
+        .arrow:nth-child(8) {
+            animation: slide-up 0.5s ease 0.45s forwards;
+            opacity: 0;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 700px) {
+            .pipeline {
+                flex-direction: column;
+                align-items: center;
+                gap: 0;
+            }
+
+            .arrow {
+                transform: rotate(90deg);
+                width: auto;
+                height: 36px;
+            }
+
+            .stage {
+                width: 100%;
+                max-width: 280px;
+            }
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>Security Research Assistant — Pipeline</h1>
+        <p>Click a stage to explore • Powered by MCP inside VS Code</p>
+    </div>
+
+    <div class="pipeline" id="pipeline">
+        <!-- Stages and arrows injected by JS -->
+    </div>
+
+    <div class="detail-panel" id="detail-panel">
+        <h2 id="detail-title"></h2>
+        <div class="description" id="detail-desc"></div>
+        <div class="tech-stack" id="detail-tech"></div>
+    </div>
+
+    <div class="footer">
+        BSides Ballarat 2026 · Tim Haintz · Fun with Agentic AI
+    </div>
+
+    <script type="module">
+        import { App } from "https://esm.sh/@modelcontextprotocol/ext-apps@1.1.0";
+
+        // ── Pipeline data ──────────────────────────────────────────────────────
+        const STAGES = [
+            {
+                id: "discover",
+                icon: "🔍",
+                label: "Discover",
+                tool: "Semantic Scholar MCP",
+                description:
+                    "Query academic databases for security research papers using the Semantic Scholar MCP server. " +
+                    "Search by topic, author, or citation — the MCP tools handle API calls, pagination, and metadata extraction.",
+                tech: [
+                    { label: "Semantic Scholar API", color: "#3b82f6" },
+                    { label: "MCP stdio", color: "#06b6d4" },
+                    { label: "uvx", color: "#10b981" },
+                ],
+            },
+            {
+                id: "acquire",
+                icon: "📥",
+                label: "Acquire",
+                tool: "arXiv PDF Download",
+                description:
+                    "Download full PDF papers from arXiv using the arxiv ID. " +
+                    "The agent constructs the direct URL (arxiv.org/pdf/<ID>) and downloads with a User-Agent header. " +
+                    "Works via Node.js https module (extension) or PowerShell Invoke-WebRequest (custom agent).",
+                tech: [
+                    { label: "arXiv.org", color: "#06b6d4" },
+                    { label: "Node.js https", color: "#10b981" },
+                    { label: "Invoke-WebRequest", color: "#a855f7" },
+                ],
+            },
+            {
+                id: "render",
+                icon: "🖼️",
+                label: "Render",
+                tool: "PDF Toolkit Extension",
+                description:
+                    "Open PDFs in VS Code and extract every page as a PNG/JPEG image. " +
+                    "PDF Toolkit renders each page at high resolution — the images land in PDF-Screenshots/ " +
+                    "ready for multimodal AI analysis. Human-in-the-loop confirmation before each render.",
+                tech: [
+                    { label: "PDF Toolkit", color: "#10b981" },
+                    { label: "VS Code Extension", color: "#3b82f6" },
+                    { label: "PNG extraction", color: "#f59e0b" },
+                ],
+            },
+            {
+                id: "analyse",
+                icon: "🧠",
+                label: "Analyse",
+                tool: "Copilot Chat + #file:",
+                description:
+                    "Attach extracted page images to Copilot Chat via #file: references. " +
+                    "The LLM sees the actual paper content — figures, tables, equations, diagrams — " +
+                    "and can provide deep technical analysis that text-only extraction cannot match.",
+                tech: [
+                    { label: "GitHub Copilot", color: "#a855f7" },
+                    { label: "Multimodal LLM", color: "#3b82f6" },
+                    { label: "#file: references", color: "#06b6d4" },
+                ],
+            },
+            {
+                id: "visualise",
+                icon: "📊",
+                label: "Visualise",
+                tool: "Mermaid + Markdown",
+                description:
+                    "Generate analysis documents with Mermaid diagrams that visualise paper architectures, " +
+                    "threat models, and defence mechanisms. Saved as Markdown in the papers/ directory. " +
+                    "Preview rendered diagrams instantly with the Mermaid Markdown extension.",
+                tech: [
+                    { label: "Mermaid.js", color: "#f59e0b" },
+                    { label: "Markdown", color: "#10b981" },
+                    { label: "saveMarkdown tool", color: "#a855f7" },
+                ],
+            },
+        ];
+
+        const ARROW_SVG = `<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>`;
+
+        // ── Build the pipeline DOM ─────────────────────────────────────────────
+        const pipelineEl = document.getElementById("pipeline");
+        const detailPanel = document.getElementById("detail-panel");
+        const detailTitle = document.getElementById("detail-title");
+        const detailDesc = document.getElementById("detail-desc");
+        const detailTech = document.getElementById("detail-tech");
+        let activeStage = null;
+
+        STAGES.forEach((stage, i) => {
+            // Stage card
+            const card = document.createElement("div");
+            card.className = "stage";
+            card.dataset.stage = stage.id;
+            card.innerHTML = `
+        <div class="stage-icon">${stage.icon}</div>
+        <div class="stage-number">Stage ${i + 1}</div>
+        <div class="stage-name">${stage.label}</div>
+        <div class="stage-tool">${stage.tool}</div>
+      `;
+            card.addEventListener("click", () => selectStage(stage.id));
+            pipelineEl.appendChild(card);
+
+            // Arrow (except after last)
+            if (i < STAGES.length - 1) {
+                const arrow = document.createElement("div");
+                arrow.className = "arrow";
+                arrow.dataset.from = stage.id;
+                arrow.dataset.to = STAGES[i + 1].id;
+                arrow.innerHTML = ARROW_SVG;
+                pipelineEl.appendChild(arrow);
+            }
+        });
+
+        function selectStage(stageId) {
+            const stage = STAGES.find((s) => s.id === stageId);
+            if (!stage) return;
+
+            // Toggle if already active
+            if (activeStage === stageId) {
+                activeStage = null;
+                document.querySelectorAll(".stage").forEach((el) => el.classList.remove("active"));
+                document.querySelectorAll(".arrow").forEach((el) => el.classList.remove("active"));
+                detailPanel.classList.remove("visible");
+                return;
+            }
+
+            activeStage = stageId;
+
+            // Update cards
+            document.querySelectorAll(".stage").forEach((el) => {
+                el.classList.toggle("active", el.dataset.stage === stageId);
+            });
+
+            // Highlight arrows up to and including the active stage
+            const stageIdx = STAGES.findIndex((s) => s.id === stageId);
+            document.querySelectorAll(".arrow").forEach((el) => {
+                const fromIdx = STAGES.findIndex((s) => s.id === el.dataset.from);
+                el.classList.toggle("active", fromIdx < stageIdx);
+            });
+
+            // Show detail panel
+            detailTitle.innerHTML = `<span style="font-size:1.3rem">${stage.icon}</span> ${stage.label}`;
+            detailDesc.textContent = stage.description;
+            detailTech.innerHTML = stage.tech
+                .map(
+                    (t) =>
+                        `<span class="tech-tag" style="color:${t.color};border-color:${t.color}40;background:${t.color}15">${t.label}</span>`,
+                )
+                .join("");
+            detailPanel.classList.add("visible");
+        }
+
+        // ── MCP App integration ────────────────────────────────────────────────
+        try {
+            const app = new App({ name: "BSides Architecture Diagram", version: "1.0.0" });
+            app.connect();
+
+            // When the tool result arrives, optionally highlight a stage
+            app.ontoolresult = (result) => {
+                try {
+                    const text = result.content?.find((c) => c.type === "text")?.text;
+                    if (!text) return;
+                    const data = JSON.parse(text);
+                    if (data.highlight && data.highlight !== "all") {
+                        selectStage(data.highlight);
+
+                        // Also add pulse animation
+                        const el = document.querySelector(`[data-stage="${data.highlight}"]`);
+                        if (el) {
+                            el.classList.add("highlighted");
+                            setTimeout(() => el.classList.remove("highlighted"), 4500);
+                        }
+                    }
+                } catch {
+                    // Silently ignore parse errors
+                }
+            };
+        } catch {
+            // Running outside an MCP host — still works as standalone HTML
+            console.log("MCP App SDK not available — running in standalone mode");
+        }
+    </script>
+</body>
+
+</html>
