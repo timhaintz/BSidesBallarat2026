@@ -23,6 +23,9 @@ The entire VS Code environment (settings, extensions, MCP config) is version-con
 
 ```text
 BSidesBallarat2026/
+├── .github/
+│   └── agents/
+│       └── bsides-researcher.md  # Custom Agent definition (main VS Code window)
 ├── .vscode/
 │   ├── mcp.json           # Workspace-local MCP server config
 │   ├── extensions.json    # Recommended VS Code extensions
@@ -59,32 +62,186 @@ BSidesBallarat2026/
 ### Setup
 
 1. **Clone the repo**
+
    ```bash
    git clone https://github.com/timhaintz/BSidesBallarat2026.git
    cd BSidesBallarat2026
    ```
+
 2. **Install Python 3.13+ and create the virtual environment**
+
    ```bash
    uv python install 3.13
    uv sync --group dev
    ```
+
 3. **Open in VS Code** — VS Code will prompt you to install the recommended extensions.
+
    ```bash
    code .
    ```
+
 4. **Copy the env template** and add your API key:
+
    ```bash
    cp .env.example .env
    ```
+
 5. **Start the MCP servers** — Open the Chat view and the servers defined in `.vscode/mcp.json` will be available.
 
 6. **Build and launch the extension**
+
    ```bash
    cd extension
    npm install
    npm run compile
    ```
+
    Press **Ctrl+Shift+D** to open the Run and Debug panel, select **"Run @bsides-researcher Extension"**, then press **F5** to launch the Extension Development Host. The `@bsides-researcher` participant will be available in the Copilot Chat panel in the new window.
+
+## Using the Research Assistant
+
+There are **two ways** to use the BSides Researcher — pick whichever suits your workflow:
+
+| Approach | Runs in | Setup required | Best for |
+|---|---|---|---|
+| **Custom Agent** (recommended) | Main VS Code window | Clone the repo, open in VS Code | Daily use, quick start, sharing with others |
+| **Chat Participant Extension** | Extension Development Host (F5) | `npm install`, `npm run compile`, F5 | Polished demo, advanced features (confirmation dialogs, followup buttons) |
+
+Both approaches use the same pipeline: **Discover → Acquire → Render → Analyse → Visualise**.
+
+---
+
+### Option A: Custom Agent (Recommended)
+
+The Custom Agent works immediately in your main VS Code window — no compilation or separate window needed. Anyone who clones this repo gets it automatically.
+
+#### Getting Started
+
+1. Open this repo in VS Code.
+2. Open the Chat view (**Ctrl+Alt+I**).
+3. Click the **Agent** dropdown at the bottom of the chat panel.
+4. Select **BSides Researcher** from the list.
+5. Type your research question and press Enter.
+
+#### Example Prompts
+
+```
+Find the latest papers on prompt injection defenses
+```
+
+```
+Search for research on LLM jailbreaking techniques and download the top 3 papers
+```
+
+```
+Find papers about adversarial attacks on multimodal models, download them,
+screenshot the PDFs, and save an analysis with Mermaid diagrams
+```
+
+```
+Get the paper with arXiv ID 2502.05174 and analyse its defense architecture
+```
+
+```
+Compare the approaches in the papers I've already downloaded in the papers/ directory
+```
+
+The Custom Agent will ask for your confirmation before downloading papers and rendering screenshots (human-in-the-loop), then walk you through each step of the pipeline.
+
+---
+
+### Option B: Chat Participant Extension (`@bsides-researcher`)
+
+The Chat Participant extension provides a more polished experience with slash commands, confirmation dialogs, and clickable followup suggestions. It requires building the extension and running it in the Extension Development Host.
+
+#### Getting Started
+
+1. Build the extension:
+
+   ```bash
+   cd extension
+   npm install
+   npm run compile
+   ```
+
+2. Press **Ctrl+Shift+D** → select **"Run @bsides-researcher Extension"** → press **F5**.
+3. In the new Extension Development Host window, open the Chat view (**Ctrl+Alt+I**).
+4. Type `@bsides-researcher` followed by your prompt, or use a slash command.
+
+#### Slash Commands
+
+| Command | Description | Example |
+|---|---|---|
+| `/find` | Search for papers on a topic | `@bsides-researcher /find prompt injection defenses` |
+| `/download` | Download a paper by arXiv ID | `@bsides-researcher /download 2502.05174 melon-provable-defense` |
+| `/render` | Extract page screenshots from a PDF | `@bsides-researcher /render papers/melon-provable-defense-prompt-injection.pdf` |
+| `/workflow` | Run the full pipeline end-to-end | `@bsides-researcher /workflow find and analyse papers on prompt injection` |
+
+#### Example Prompts
+
+**Discover papers:**
+
+```
+@bsides-researcher /find LLM supply chain attacks
+```
+
+**Download a specific paper:**
+
+```
+@bsides-researcher /download 2502.05174 melon-provable-defense
+```
+
+**Render a downloaded PDF as screenshots:**
+
+```
+@bsides-researcher /render papers/melon-provable-defense-prompt-injection.pdf
+```
+
+**Run the full pipeline (search → download → screenshot → analyse → save):**
+
+```
+@bsides-researcher /workflow find and analyse papers on prompt injection defenses
+```
+
+**General questions (no slash command):**
+
+```
+@bsides-researcher What are the main categories of prompt injection attacks?
+```
+
+#### Extension-Only Features
+
+- **Confirmation dialogs** — before each PDF is screenshotted, a "Continue" / "Cancel" dialog appears so you can approve each paper individually.
+- **Followup suggestions** — after screenshots are extracted, clickable buttons appear (e.g., "Analyse melon-provable-defense screenshots") so you can choose which papers to analyse.
+- **Automatic tool chaining** — the agentic loop feeds tool results back into the model so it can use output from one step (e.g., a downloaded filename) as input to the next step (e.g., screenshot that file).
+
+---
+
+### Analysing Screenshots
+
+After rendering a PDF, its page images are saved to `PDF-Screenshots/<paper-name>/`. To analyse them:
+
+1. In the Chat view, type `#file:` and select the screenshot images (or the entire folder) from `PDF-Screenshots/`.
+2. Ask the agent to analyse the attached images:
+
+   ```
+   Analyse these paper screenshots and create a security research summary with Mermaid diagrams
+   ```
+
+3. The agent reads the images, extracts key findings, and generates Mermaid diagrams for attack/defense flows.
+4. The analysis is saved as a Markdown file in `papers/` — open Markdown preview (**Ctrl+Shift+V**) to see the Mermaid diagrams rendered.
+
+### Where Things End Up
+
+| Output | Location |
+|---|---|
+| Downloaded PDFs | `papers/<kebab-case-name>.pdf` |
+| Page screenshots | `PDF-Screenshots/<paper-name>/page-1.png`, `page-2.png`, … |
+| Analysis Markdown | `papers/<topic>-research-analysis.md` |
+| Mermaid diagrams | Embedded in the analysis Markdown files |
+
+---
 
 ## Project Documents
 
