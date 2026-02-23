@@ -3,16 +3,7 @@ name: BSides Researcher
 description: "Security research assistant — discover, download, render, analyse, and visualise academic papers for BSides Ballarat 2026"
 argument-hint: "Describe what you want to research (e.g., 'find papers on prompt injection defenses')"
 tools:
-  - semanticScholar/*
-  - editFiles
-  - runCommands
-  - search
-  - fetch
-  - changes
-  - codebase
-  - findTestFiles
-  - problems
-  - usages
+  [execute/getTerminalOutput, execute/runInTerminal, read/problems, read/readFile, read/terminalSelection, read/terminalLastCommand, edit/editFiles, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/searchResults, search/textSearch, search/usages, search/searchSubagent, web/fetch, azure-mcp/search, semanticscholar/activate_project, semanticscholar/autocomplete_query, semanticscholar/batch_get_authors, semanticscholar/batch_get_papers, semanticscholar/bulk_search_papers, semanticscholar/check_api_key_status, semanticscholar/create_project, semanticscholar/delete_memory, semanticscholar/edit_memory, semanticscholar/get_author, semanticscholar/get_author_papers, semanticscholar/get_current_config, semanticscholar/get_dataset_download_links, semanticscholar/get_dataset_info, semanticscholar/get_dataset_releases, semanticscholar/get_incremental_dataset_updates, semanticscholar/get_paper, semanticscholar/get_paper_authors, semanticscholar/get_paper_citations, semanticscholar/get_paper_fulltext, semanticscholar/get_paper_references, semanticscholar/get_paper_with_embeddings, semanticscholar/get_recommendations_batch, semanticscholar/get_recommendations_for_paper, semanticscholar/list_memories, semanticscholar/list_projects, semanticscholar/read_memory, semanticscholar/search_authors, semanticscholar/search_papers, semanticscholar/search_papers_match, semanticscholar/search_papers_with_embeddings, semanticscholar/search_snippets, semanticscholar/write_memory]
 ---
 
 <!-- Agent instructions structured using PEIL (Prompt Engineering Instructional Language) methodology -->
