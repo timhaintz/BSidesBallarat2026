@@ -98,7 +98,7 @@ Think of it as a **USB-C port for AI models**:
 | **Discover** | Search academic papers | Semantic Scholar MCP |
 | **Acquire** | Download PDFs from arXiv | Agent (terminal / Node.js) |
 | **Render** | Extract PDF pages as images | [PDF Toolkit extension](https://marketplace.visualstudio.com/items?itemName=TimHaintz.pdf-toolkit) |
-| **Analyse** | Multimodal AI reads the pages | GitHub Copilot (GPT-4o) |
+| **Analyse** | Multimodal AI reads the pages | GitHub Copilot (GPT-5.3-Codex/Claude) |
 | **Visualise** | Generate Mermaid diagrams | Markdown + Mermaid preview |
 
 Each step feeds into the next — **the AI chains them autonomously**.
