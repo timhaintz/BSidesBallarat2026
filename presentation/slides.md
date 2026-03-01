@@ -13,7 +13,7 @@ footer: 'BSides Ballarat 2026 — Tim Haintz'
 
 # Fun with Agentic AI
 
-## A "Security Operations Center" Inside VS Code
+## A "Security Research Assistant" Inside VS Code
 
 ### Tim Haintz — BSides Ballarat 2026
 
