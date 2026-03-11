@@ -302,6 +302,19 @@ The Semantic Scholar MCP server does **not** download raw PDFs. Its `get_paper_f
 - **`openAccessPdf` is unreliable** — tested against the Semantic Scholar API (both direct and via MCP) and it returns empty URLs even for well-known open-access papers (e.g., "Attention is All You Need"). Do not depend on this field for downloading PDFs.
 - Do **not** use `get_paper_fulltext` — it converts to Markdown and bypasses PDF Toolkit and won't have access to the images in the PDF.
 
+### Copilot Chat Image Limit (Max 20 URL Images per Request)
+
+- **The GitHub Copilot API enforces a limit of 20 URL images per request.** This is a server-side restriction in the Copilot backend — the error is `{"error":{"message":"too many URL images in request (max 20)","code":""}}`.
+- Because the **entire conversation history** (including all images from prior turns) is sent with each new request, this is effectively **20 images total across the entire chat conversation** — not 20 per message.
+- Once exceeded, even non-image messages (e.g., "Hello") will fail because the history still contains the images.
+- This limit is **not documented** in the official GitHub Copilot docs or VS Code Language Model API docs. The underlying OpenAI API supports up to 500 images per request, so the 20-image cap is specific to the Copilot platform.
+- **Workarounds:**
+  - **Start a new chat session** before analysing a new paper's screenshots (resets the image count).
+  - **Attach fewer pages** per conversation — use PDF Toolkit's `Screenshot Custom...` command to select specific pages (e.g., key figures, results, abstract) instead of `Screenshot All Pages`.
+  - **Split analysis across multiple conversations** — e.g., pages 1–10 in one session, pages 11–20 in another.
+  - For papers with many pages, prioritise the most informative pages (abstract, methodology, results, figures) and skip boilerplate (references, appendices).
+- **Impact on the demo:** Plan the Analyse step to stay under 20 images. A typical 7-page paper is fine on its own; analysing two papers in the same conversation will likely exceed the limit.
+
 ### Papers Directory Convention
 
 - Downloaded PDFs go in `papers/` with kebab-case descriptive names (e.g., `melon-provable-defense-prompt-injection.pdf`).
