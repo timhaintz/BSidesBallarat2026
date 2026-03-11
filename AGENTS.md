@@ -308,6 +308,7 @@ The Semantic Scholar MCP server does **not** download raw PDFs. Its `get_paper_f
 - Because the **entire conversation history** (including all images from prior turns) is sent with each new request, this is effectively **20 images total across the entire chat conversation** — not 20 per message.
 - Once exceeded, even non-image messages (e.g., "Hello") will fail because the history still contains the images.
 - This limit is **not documented** in the official GitHub Copilot docs or VS Code Language Model API docs. The underlying OpenAI API supports up to 500 images per request, so the 20-image cap is specific to the Copilot platform.
+- **No alternative encoding bypasses this limit.** All image attachment methods — `#file:` references, drag-and-drop, paste, PDF Toolkit's "Add to Copilot Chat" button, and the extension's `LanguageModelDataPart.image()` with binary data — go through the same Copilot backend pipeline and count toward the same 20-image ceiling. The error says "URL images" but it applies to all image content regardless of encoding (URL, base64, inline binary).
 - **Workarounds:**
   - **Start a new chat session** before analysing a new paper's screenshots (resets the image count).
   - **Attach fewer pages** per conversation — use PDF Toolkit's `Screenshot Custom...` command to select specific pages (e.g., key figures, results, abstract) instead of `Screenshot All Pages`.
