@@ -285,20 +285,34 @@ The Semantic Scholar MCP server does **not** download raw PDFs. Its `get_paper_f
 
 **Proven download process:**
 
-1. Find the paper's arXiv ID from Semantic Scholar results (e.g., `2502.05174`).
+1. Find the paper's arXiv ID (see "Finding arXiv IDs" below).
 2. Construct the direct PDF URL: `https://arxiv.org/pdf/<ARXIV_ID>` (e.g., `https://arxiv.org/pdf/2502.05174`).
-3. Download using PowerShell:
+3. Download using PowerShell — **one paper at a time**, using the simplest possible command:
 
    ```powershell
-   Invoke-WebRequest -Uri "https://arxiv.org/pdf/2502.05174" -OutFile "papers/melon-provable-defense-prompt-injection.pdf" -UserAgent "Mozilla/5.0"
+   Invoke-WebRequest -Uri "https://arxiv.org/pdf/2502.05174" -OutFile "papers/melon-provable-defense-prompt-injection.pdf" -UserAgent "Mozilla/5.0" -UseBasicParsing
    ```
 
 4. Use kebab-case descriptive filenames (e.g., `adaptive-attacks-indirect-prompt-injection.pdf`).
 
-**Notes:**
+**CRITICAL — `-UseBasicParsing` is REQUIRED:**
+
+- PowerShell 5.1 (the default on Windows) will show a **blocking "Security Warning: Script Execution Risk"** dialog without `-UseBasicParsing`. This halts the terminal and requires manual intervention.
+- **ALWAYS** include `-UseBasicParsing` on every `Invoke-WebRequest` call. There are no exceptions.
+- Do NOT use `System.Net.WebClient`, `curl`, or other alternatives — `Invoke-WebRequest -UseBasicParsing` is the proven, reliable method.
+- Do NOT batch multiple downloads in a single script with loops — download one paper at a time so failures are easy to diagnose.
+
+**Finding arXiv IDs:**
+
+- **Best method:** Search the paper title on `https://arxiv.org/search/` (via `web/fetch` tool or manually). The arXiv search reliably finds papers by exact title.
+- **From Semantic Scholar:** Call `get_paper` with `fields=["externalIds"]` — if the paper is on arXiv, the `ArXiv` field in `externalIds` contains the arXiv ID.
+- **Do NOT rely on the arXiv API** (`export.arxiv.org/api/query`) for title-based search — it uses keyword matching, not exact title search, and frequently returns wrong papers.
+- **From your training data:** If you already know an arXiv ID for a paper, use it directly.
+- Not all papers are on arXiv. For non-arXiv papers, check if `externalIds` from `get_paper` contain a DOI or other identifier to find a direct PDF link from the publisher.
+
+**Other notes:**
 
 - The `-UserAgent` parameter is needed — arXiv may reject requests without it.
-- Not all papers are on arXiv. For non-arXiv papers, check if the `externalIds` from `get_paper` contain a DOI or other identifier to find a direct PDF link from the publisher.
 - **`openAccessPdf` is unreliable** — tested against the Semantic Scholar API (both direct and via MCP) and it returns empty URLs even for well-known open-access papers (e.g., "Attention is All You Need"). Do not depend on this field for downloading PDFs.
 - Do **not** use `get_paper_fulltext` — it converts to Markdown and bypasses PDF Toolkit and won't have access to the images in the PDF.
 

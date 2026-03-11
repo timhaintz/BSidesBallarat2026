@@ -31,14 +31,22 @@ When discovering papers:
 
 Download selected papers as PDFs from arXiv to the `papers/` directory.
 
-When downloading papers:
+**Finding arXiv IDs:**
+- Call `#tool:mcp_semanticschol_get_paper` with `fields=["externalIds"]` to get the arXiv ID from the `ArXiv` field in `externalIds`
+- Alternatively, search the paper title on `https://arxiv.org/search/` using the `web/fetch` tool
+- If you already know an arXiv ID from your training data, use it directly
+- Do NOT rely on the arXiv API (`export.arxiv.org/api/query`) for title search — it uses keyword matching and frequently returns wrong papers
+
+**Downloading papers — one at a time, using the simplest possible command:**
 - Construct the direct PDF URL: `https://arxiv.org/pdf/<ARXIV_ID>` (e.g., `https://arxiv.org/pdf/2502.05174`)
 - Download using PowerShell in the terminal:
   ```powershell
-  Invoke-WebRequest -Uri "https://arxiv.org/pdf/<ARXIV_ID>" -OutFile "papers/<descriptive-kebab-case-name>.pdf" -UserAgent "Mozilla/5.0"
+  Invoke-WebRequest -Uri "https://arxiv.org/pdf/<ARXIV_ID>" -OutFile "papers/<descriptive-kebab-case-name>.pdf" -UserAgent "Mozilla/5.0" -UseBasicParsing
   ```
+- **`-UseBasicParsing` is REQUIRED** — without it, PowerShell 5.1 shows a blocking "Security Warning" dialog that halts the terminal
+- **`-UserAgent "Mozilla/5.0"` is REQUIRED** — arXiv rejects requests without it
+- Download ONE paper per command — do NOT batch downloads in loops or scripts
 - Use descriptive kebab-case filenames (e.g., `melon-provable-defense-prompt-injection.pdf`)
-- The `-UserAgent` parameter is required — arXiv rejects requests without it
 - Not all papers are on arXiv. For non-arXiv papers, check `externalIds` from `#tool:mcp_semanticschol_get_paper` for a DOI or alternative source
 - Do NOT use `#tool:mcp_semanticschol_get_paper_fulltext` — it converts PDFs to Markdown and loses the visual layout needed for analysis
 
