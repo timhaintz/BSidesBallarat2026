@@ -15,7 +15,7 @@ footer: 'BSides Ballarat 2026 — Tim Haintz'
 
 ## A "Security Research Assistant" Inside VS Code
 
-### Tim Haintz — BSides Ballarat 2026
+### Tim Haintz — BRAIN March 2026
 
 ![bg right:35% w:300](https://asterion.federation.edu.au/uploads/logos/1771324993882_goukpfedzci.png)
 
