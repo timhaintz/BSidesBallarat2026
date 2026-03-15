@@ -106,6 +106,7 @@ BSidesBallarat2026/
 ├── presentation/          # Marp slide deck and custom theme
 │   ├── slides.md
 │   └── theme.css
+├── skills/                # Reusable workflow skills for discover/acquire/render/analyse
 ├── papers/                # Downloaded PDFs and analysis Markdown files
 ├── PDF-Screenshots/       # Page images extracted by PDF Toolkit
 ├── bsides-researcher.code-workspace  # Workspace file for Extension Dev Host
@@ -179,10 +180,12 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
 - [x] `saveMarkdown` LM tool — saves analysis and Mermaid diagrams to workspace files.
 - [x] Dynamic tool discovery — all available LM tools (including MCP) passed to the model.
 - [x] BSides Researcher Custom Agent (`.github/agents/bsides-researcher.md`) — same pipeline, runs in main VS Code window without Extension Development Host.
+- [x] Reusable workflow skills added under `skills/` for deterministic discover/acquire/render/analyse runs.
 - [x] Test end-to-end: `@bsides-researcher find and analyse prompt injection papers`.
   - Demonstrated: Full pipeline via `/workflow prompt injection` — Semantic Scholar search returned 20 papers, 4 downloaded to `papers/`, screenshots extracted to `PDF-Screenshots/`, Mermaid diagrams generated, analysis saved to `papers/prompt-injection-research-analysis.md` (16.2 KB).
   - Human-in-the-loop confirmation dialogs shown before each PDF screenshot.
   - Followup suggestions offered post-screenshot for selective analysis.
+  - Added deterministic analysis support via the `analyse-paper-screenshots` skill and helper scripts that keep multimodal prompts under Copilot's 20-image limit.
 
 ### Phase 4: Presentation & Interactive Diagrams
 
@@ -210,3 +213,5 @@ The repo must include all `.vscode/` configuration files so that cloning the rep
   - Demonstrated: PDF Toolkit `Screenshot All Pages` extracted MELON paper pages as images, attached to Copilot Chat.
 - [x] A **Mermaid diagram** is successfully generated from the context of that paper.
   - Demonstrated: 3 Mermaid diagrams generated in `papers/melon-paper-analysis.md` from MELON paper analysis.
+- [x] The analysis step can be repeated safely without exceeding Copilot's image ceiling.
+  - Demonstrated: the `analyse-paper-screenshots` skill selects a deterministic subset of screenshots and emits ready-to-paste `#file:` references.

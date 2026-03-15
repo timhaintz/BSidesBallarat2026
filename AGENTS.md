@@ -49,6 +49,7 @@ servers/           → Node MCP server code
 presentation/      → Marp slide deck and custom theme for the BSides Ballarat 2026 talk
   slides.md        → Marp Markdown slides (12 slides, 20-minute talk)
   theme.css        → Custom dark hacker theme (BSides aesthetic)
+skills/            → Reusable workflow skills (discover, acquire, render, analyse)
 papers/            → Downloaded research PDFs and analysis Markdown files
 PDF-Screenshots/   → PNG/JPEG images extracted from PDFs via PDF Toolkit
 ```
@@ -276,7 +277,7 @@ This workflow has been validated end-to-end:
 1. **Discover** — Query Semantic Scholar MCP for papers (e.g., "prompt injection").
 2. **Acquire** — Download PDFs from arXiv to `papers/` directory (see below).
 3. **Render** — Open PDFs in VS Code with PDF Toolkit; use `Screenshot All Pages` to extract page images to `PDF-Screenshots/`.
-4. **Analyse** — Attach extracted images to Copilot Chat via `#file:` references for multimodal analysis.
+4. **Analyse** — Use the `skills/analyse-paper-screenshots/` helpers to select a safe subset of extracted images, then attach them to Copilot Chat via `#file:` references for multimodal analysis.
 5. **Visualise** — Generate Mermaid diagrams in a Markdown analysis file (e.g., `papers/<name>-paper-analysis.md`); preview with `bierner.markdown-mermaid` extension.
 
 ### Downloading Papers from arXiv
@@ -328,6 +329,7 @@ The Semantic Scholar MCP server does **not** download raw PDFs. Its `get_paper_f
   - **Attach fewer pages** per conversation — use PDF Toolkit's `Screenshot Custom...` command to select specific pages (e.g., key figures, results, abstract) instead of `Screenshot All Pages`.
   - **Split analysis across multiple conversations** — e.g., pages 1–10 in one session, pages 11–20 in another.
   - For papers with many pages, prioritise the most informative pages (abstract, methodology, results, figures) and skip boilerplate (references, appendices).
+- **Bundled helper:** `skills/analyse-paper-screenshots/scripts/select-analysis-images.ps1` emits a deterministic subset of pages and can print ready-to-paste `#file:` references.
 - **Impact on the demo:** Plan the Analyse step to stay under 20 images. A typical 7-page paper is fine on its own; analysing two papers in the same conversation will likely exceed the limit.
 
 ### Papers Directory Convention

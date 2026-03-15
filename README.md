@@ -46,6 +46,7 @@ BSidesBallarat2026/
 ├── presentation/          # Marp slide deck for the BSides talk
 │   ├── slides.md          # 12 Marp Markdown slides (20-minute talk)
 │   └── theme.css          # Custom dark hacker theme
+├── skills/                # Reusable workflow skills for discover/acquire/render/analyse
 ├── papers/                # Downloaded PDFs and analysis Markdown files
 ├── PDF-Screenshots/       # Page images extracted by PDF Toolkit
 ├── bsides-researcher.code-workspace  # Workspace file for Extension Dev Host
@@ -233,22 +234,29 @@ The Chat Participant extension provides a more polished experience with slash co
 
 After rendering a PDF, its page images are saved to `PDF-Screenshots/<paper-name>/`. To analyse them:
 
-1. In the Chat view, type `#file:` and select the screenshot images (or the entire folder) from `PDF-Screenshots/`.
-2. Ask the agent to analyse the attached images:
+1. If you want a deterministic, demo-safe selection workflow, run the bundled analyse skill helpers first:
+
+   ```powershell
+   .\skills\analyse-paper-screenshots\scripts\list-recent-screenshot-dirs.ps1
+   .\skills\analyse-paper-screenshots\scripts\select-analysis-images.ps1 -DirectoryName "<paper-dir>" -MaxImages 12 -AsFileRefs
+   ```
+
+2. In the Chat view, type `#file:` and select only the recommended screenshot images from `PDF-Screenshots/`.
+3. Ask the agent to analyse the attached images:
 
    ```
    Analyse these paper screenshots and create a security research summary with Mermaid diagrams
    ```
 
-3. The agent reads the images, extracts key findings, and generates Mermaid diagrams for attack/defense flows.
-4. The analysis is saved as a Markdown file in `papers/` — open Markdown preview (**Ctrl+Shift+V**) to see the Mermaid diagrams rendered.
+4. The agent reads the images, extracts key findings, and generates Mermaid diagrams for attack/defense flows.
+5. The analysis is saved as a Markdown file in `papers/` — open Markdown preview (**Ctrl+Shift+V**) to see the Mermaid diagrams rendered.
 
 ### Where Things End Up
 
 | Output | Location |
 |---|---|
 | Downloaded PDFs | `papers/<kebab-case-name>.pdf` |
-| Page screenshots | `PDF-Screenshots/<paper-name>/page-1.png`, `page-2.png`, … |
+| Page screenshots | `PDF-Screenshots/<paper-name>/page_001.png`, `page_002.png`, … |
 | Analysis Markdown | `papers/<topic>-research-analysis.md` |
 | Mermaid diagrams | Embedded in the analysis Markdown files |
 
