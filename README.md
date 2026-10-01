@@ -279,6 +279,19 @@ During the live demo, the **MCP Apps server** renders an interactive architectur
 
 This project is being built live for the BSides Ballarat 2026 presentation. Feel free to watch, fork, or open issues/discussions.
 
+CI uses Node.js 22 to install the two locked Node projects without lifecycle scripts,
+compile the extension, typecheck the MCP server, run offline behavior tests, and check
+for moderate or higher npm advisories. Run `npm ci --ignore-scripts` and `npm test`
+in `extension/`; in `servers/mcp-slides/`, also run `npm run typecheck`.
+The tests use a mocked VS Code API or a local stdio MCP client and require no API keys.
+The interactive Copilot/VS Code demo still needs the manual testing described in
+[AGENTS.md](AGENTS.md).
+
+CodeQL scans JavaScript/TypeScript (including embedded JavaScript in the architecture
+HTML) and GitHub Actions on pull requests, pushes to `main`, and weekly. PowerShell,
+HTML markup, and CSS are outside CodeQL language coverage. There is no repository
+Python source to scan; `uv.lock` contains development tools only.
+
 ## License
 
 MIT

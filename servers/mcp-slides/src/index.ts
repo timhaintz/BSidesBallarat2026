@@ -17,7 +17,6 @@ import {
 } from "@modelcontextprotocol/ext-apps/server";
 import { z } from "zod";
 import fs from "node:fs/promises";
-import path from "node:path";
 
 const server = new McpServer({
   name: "bsides-mcp-slides",
@@ -81,7 +80,7 @@ registerAppResource(
   { mimeType: RESOURCE_MIME_TYPE },
   async () => {
     const html = await fs.readFile(
-      path.join(import.meta.dirname, "ui", "architecture.html"),
+      new URL("./ui/architecture.html", import.meta.url),
       "utf-8",
     );
     return {

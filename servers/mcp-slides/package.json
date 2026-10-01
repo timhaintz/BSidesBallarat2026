@@ -5,15 +5,17 @@
   "type": "module",
   "scripts": {
     "serve": "npx tsx src/index.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/ext-apps": "^1.1.0",
     "@modelcontextprotocol/sdk": "^1.26.0"
   },
   "devDependencies": {
-    "typescript": "^5.8.3",
-    "tsx": "^4.19.4"
+    "@types/node": "^20.19.43",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
   },
   "engines": {
     "node": ">=18"
